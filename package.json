@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@solid/community-server": "^7.1.7",
+    "componentsjs": "^6.3.0",
     "componentsjs-generator": "^4.3.0"
   },
   "types": "./dist/index.d.ts",
