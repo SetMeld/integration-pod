@@ -1,15 +1,24 @@
-// tsconfig.json
 {
+  "extends": "@tsconfig/node18/tsconfig.json",
   "compilerOptions": {
+    "incremental": true,
+    "lib": [
+      "es2021"
+    ],
+    "moduleResolution": "node16",
+    "declaration": true,
+    "inlineSources": true,
+    "newLine": "lf",
     "outDir": "dist",
-    "target": "ES2020",
-    "module": "CommonJS",
-    "noImplicitAny": true,
+    "preserveConstEnums": true,
+    "sourceMap": true,
+    "stripInternal": true
   },
   "include": [
-    "src"
+    "src",
+    "templates/types/oidc-provider.d.ts"
   ],
   "exclude": [
     "node_modules"
-  ],
+  ]
 }

@@ -1,0 +1,30 @@
+{
+  "@context": [
+    "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^7.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/integration-solid-server/^0.0.0/components/context.jsonld"
+  ],
+  "@graph": [
+    {
+      "comment": "Routes all integration related requests to the relevant handlers.",
+      "@id": "urn:solid-server:default:IntegrationRouteHandler",
+      "@type": "RouterHandler",
+      "baseUrl": {
+        "@id": "urn:solid-server:default:variable:baseUrl"
+      },
+      "targetExtractor": {
+        "@id": "urn:solid-server:default:TargetExtractor"
+      },
+      "allowedPathNames": [
+        "^/.integration/.*"
+      ],
+      "handler": {
+        "@id": "urn:solid-server:default:IdentityProviderParsingHandler"
+      }
+    },
+    {
+      "comment": "Handles Integration Route",
+      "@id": "urn:solid-server:default:IntegrationHandler",
+      "@type": "IntegrationHandler"
+    }
+  ]
+}
