@@ -1,7 +1,50 @@
 {
   "@context": [
     "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^7.0.0/components/context.jsonld",
-    "https://linkedsoftwaredependencies.org/bundles/npm/integration-solid-server/^1.0.0/components/context.jsonld"
+    "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod/^1.0.0/components/context.jsonld"
   ],
-  "@graph": []
+  "@graph": [
+    {
+      "@type": "Override",
+      "overrideInstance": {
+        "@id": "urn:solid-server:default:BaseHttpHandler"
+      },
+      "overrideSteps": [
+        {
+          "@type": "OverrideListInsertBefore",
+          "overrideParameter": {
+            "@id": "WaterfallHandler:_handlers"
+          },
+          "overrideTarget": {
+            "@id": "urn:solid-server:default:LdpHandler"
+          },
+          "overrideValue": {
+            "@id": "urn:solid-server:default:IntegrationRouteHandler"
+          }
+        }
+      ]
+    },
+    {
+      "comment": "Routes all integration related requests to the relevant handlers.",
+      "@id": "urn:solid-server:default:IntegrationRouteHandler",
+      "@type": "RouterHandler",
+      "baseUrl": {
+        "@id": "urn:solid-server:default:variable:baseUrl"
+      },
+      "targetExtractor": {
+        "@id": "urn:solid-server:default:TargetExtractor"
+      },
+      "allowedPathNames": [
+        "^/.integration/.*"
+      ],
+      "handler": {
+        "@id": "urn:solid-server:default:IntegrationHandler"
+      }
+    },
+    {
+      "comment": "Handles Integration Route",
+      "@id": "urn:solid-server:default:IntegrationHandler",
+      "@type": "IntegrationHandler"
+    }
+  ]
 }

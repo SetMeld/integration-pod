@@ -14,9 +14,11 @@
     "sourceMap": true,
     "stripInternal": true
   },
+  "types": [
+    "node"
+  ],
   "include": [
-    "src",
-    "templates/types/oidc-provider.d.ts"
+    "src"
   ],
   "exclude": [
     "node_modules"
