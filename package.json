@@ -9,7 +9,8 @@
     "build:components": "componentsjs-generator -s src -c dist/components -r iss -i .componentsignore",
     "build:ts": "tsc",
     "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./",
-    "dev": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -l debug"
+    "dev": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -l debug",
+    "watch": "nodemon --watch src --watch config --ext ts,json --exec \"npm run build && npm run dev\""
   },
   "repository": {
     "type": "git",
@@ -23,20 +24,24 @@
   },
   "homepage": "https://github.com/SetMeld/integration-pod#readme",
   "devDependencies": {
-    "componentsjs-generator": "^3.1.2",
     "@tsconfig/node18": "^18.2.4",
+    "@types/express": "^5.0.1",
     "@typescript-eslint/eslint-plugin": "^8.30.0",
     "@typescript-eslint/parser": "^8.30.0",
+    "componentsjs-generator": "^3.1.2",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",
+    "nodemon": "^3.1.9",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
     "typescript": "5.5.3"
   },
   "dependencies": {
+    "@solid/access-token-verifier": "^2.1.0",
     "@solid/community-server": "^7.1.7",
-    "componentsjs": "^5.5.1"
+    "componentsjs": "^5.5.1",
+    "express": "^5.1.0"
   },
   "types": "./dist/index.d.ts",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod",

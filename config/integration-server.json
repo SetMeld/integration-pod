@@ -44,7 +44,10 @@
     {
       "comment": "Handles Integration Route",
       "@id": "urn:solid-server:default:IntegrationHandler",
-      "@type": "IntegrationHandler"
+      "@type": "IntegrationHandler",
+      "IntegrationHandler:_baseUrl": {
+        "@id": "urn:solid-server:default:variable:baseUrl"
+      }
     }
   ]
 }
