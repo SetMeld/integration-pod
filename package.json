@@ -5,12 +5,16 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build:ts && npm run build:components",
-    "build:components": "componentsjs-generator -s src -c dist/components -r iss -i .componentsignore",
-    "build:ts": "tsc",
+    "build:server": "npm run build:server:ts && npm run build:server:components",
+    "build:server:components": "componentsjs-generator -s src -c dist/components -r iss -i .componentsignore",
+    "build:server:ts": "tsc",
+    "dev:server": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -l debug",
+    "watch:server": "nodemon --watch src --watch config --ext ts,json --exec \"npm run build:server && npm run dev:server\"",
+    "build:ui": "cd ui && npm install && npx vite build",
+    "dev:ui": "cd ui && npx vite",
+    "watch:ui": "cd ui && npx vite build --watch",
     "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./",
-    "dev": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -l debug",
-    "watch": "nodemon --watch src --watch config --ext ts,json --exec \"npm run build && npm run dev\""
+    "watch": "concurrently \"npm:watch:server\" \"npm:watch:ui\""
   },
   "repository": {
     "type": "git",
@@ -29,13 +33,14 @@
     "@typescript-eslint/eslint-plugin": "^8.30.0",
     "@typescript-eslint/parser": "^8.30.0",
     "componentsjs-generator": "^3.1.2",
+    "concurrently": "^9.1.2",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",
     "nodemon": "^3.1.9",
     "prettier": "^3.5.3",
     "ts-node": "^10.9.2",
-    "typescript": "5.5.3"
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@solid/access-token-verifier": "^2.1.0",

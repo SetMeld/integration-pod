@@ -1,39 +1,43 @@
 import express from "express";
-import { validateWebId } from "./validateWebId";
+import { createValidateWebId } from "./validateWebId";
 
-export const apiRouter = express.Router();
+export function createApiRouter(base: string) {
+  const apiRouter = express.Router();
 
-apiRouter.use(validateWebId);
+  apiRouter.use(createValidateWebId(base));
 
-apiRouter.get("/integration", (req, res) => {
-  throw new Error("Not Implemented");
-});
+  apiRouter.get("/integration", (req, res) => {
+    res.send("Root");
+  });
 
-apiRouter.post("/integration", (req, res) => {
-  throw new Error("Not Implemented");
-});
+  apiRouter.post("/integration", (req, res) => {
+    res.send("Root");
+  });
 
-apiRouter.get("/integration/:id", (req, res) => {
-  throw new Error("Not Implemented");
-});
+  apiRouter.get("/integration/:id", (req, res) => {
+    res.send("id");
+  });
 
-apiRouter.put("/integration/:id", (req, res) => {
-  throw new Error("Not Implemented");
-});
+  apiRouter.put("/integration/:id", (req, res) => {
+    res.send("id");
+  });
 
-apiRouter.put("/integration/:id", (req, res) => {
-  throw new Error("Not Implemented");
-});
+  apiRouter.put("/integration/:id", (req, res) => {
+    res.send("id");
+  });
 
-// Logs
-apiRouter.get("/integration/:id/log/deploy", (req, res) => {
-  throw new Error("Not Implemented");
-});
+  // Logs
+  apiRouter.get("/integration/:id/log/deploy", (req, res) => {
+    res.send("logs");
+  });
 
-apiRouter.get("/integration/:id/log/trigger", (req, res) => {
-  throw new Error("Not Implemented");
-});
+  apiRouter.get("/integration/:id/log/trigger", (req, res) => {
+    res.send("logs");
+  });
 
-apiRouter.get("/integration/:id/log/integration", (req, res) => {
-  throw new Error("Not Implemented");
-});
+  apiRouter.get("/integration/:id/log/integration", (req, res) => {
+    res.send("logs");
+  });
+
+  return apiRouter;
+}

@@ -1,5 +1,5 @@
 import { HttpHandler, HttpHandlerInput } from "@solid/community-server";
-import { Express } from "express";
+import { Express, response } from "express";
 import { createApp } from "./createApp";
 
 export interface IntegrationHandlerArgs {
@@ -15,13 +15,17 @@ export class IntegrationHandler extends HttpHandler {
   constructor(baseUrl: string) {
     super();
 
-    console.log("BASE =============================================");
-    console.log(baseUrl);
-
     this.app = createApp(baseUrl);
   }
 
   async handle(input: HttpHandlerInput): Promise<void> {
-    this.app(input.request, input.response);
+    return new Promise((resolve, reject) => {
+      response.on("finish", resolve); // success
+      response.on("close", resolve); // e.g. client aborted
+      response.on("error", reject); // error sending response
+
+      // Trigger the app
+      this.app(input.request, input.response);
+    });
   }
 }
