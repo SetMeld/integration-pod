@@ -20,12 +20,12 @@ export default function AuthLayout({
               <Link to="/" className="block mb-4">
                 <img
                   height={50}
-                  src="/.integration/images/logo/auth-logo.png"
+                  src="/.integration/images/logo/logo.png"
                   alt="Logo"
                 />
               </Link>
               <p className="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
+                Integrations for Linked Data
               </p>
             </div>
           </div>
