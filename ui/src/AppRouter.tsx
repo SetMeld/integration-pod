@@ -19,6 +19,8 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import { useSolidAuth } from "@ldo/solid-react";
 import { FunctionComponent } from "react";
+import SshKeyForm from "./pages/SshKey/SshKeyForm";
+import { IntegrationPage } from "./pages/Integration/Integrationpage";
 
 export default function AppRouter() {
   return (
@@ -30,6 +32,8 @@ export default function AppRouter() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route index path="/.integration/" element={<Home />} />
+              <Route path="/.integration/ssh-key" element={<SshKeyForm />} />
+              <Route path="/.integration/integration/:id" element={<IntegrationPage />} />
 
               {/* Others Page */}
               <Route path="/profile" element={<UserProfiles />} />
