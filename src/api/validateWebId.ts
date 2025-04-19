@@ -30,7 +30,7 @@ export function createValidateWebId(base: string) {
       );
 
       // TODO check if WebID is the single right WebId.
-      const expectedWebId = `${base}/profile/card#me`;
+      const expectedWebId = `${base}profile/card#me`;
       if (expectedWebId === webId) {
         next();
       } else {

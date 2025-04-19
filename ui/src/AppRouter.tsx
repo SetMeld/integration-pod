@@ -18,9 +18,10 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import { useSolidAuth } from "@ldo/solid-react";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import SshKeyForm from "./pages/SshKey/SshKeyForm";
-import { IntegrationPage } from "./pages/Integration/Integrationpage";
+import { IntegrationPage } from "./pages/Integration/IntegrationPage";
+import { getDefaultSession } from "@inrupt/solid-client-authn-browser";
 
 export default function AppRouter() {
   return (

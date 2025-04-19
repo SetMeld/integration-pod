@@ -1,16 +1,19 @@
 import { IntegrationInformation } from "../../../common/IntegrationInformation";
+import { callApi } from "./callApi";
+import { useSolidAuth } from "@ldo/solid-react";
 
-export function useCreateIntegration():
-  (name: string) => Promise<IntegrationInformation> {
+export function useCreateIntegration(): (
+  name: string
+) => Promise<IntegrationInformation> {
+  const { fetch } = useSolidAuth();
+
   return async (name: string) => {
-    return {
-      id: "6",
-      name: name,
-      targetFile: "/path/to/file/",
-      gitAddress: "@git:example",
-      status: {
-        "type": "ok"
-      }
-    };
+    return callApi<IntegrationInformation>(
+      fetch,
+      "/integration",
+      "json",
+      "POST",
+      JSON.stringify({ name })
+    );
   }
 }
