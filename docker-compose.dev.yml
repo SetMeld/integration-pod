@@ -7,9 +7,16 @@ services:
     ports:
       - "3000:3000"
     volumes:
+      - ./src:/app/src
+      - ./config:/app/config
       - ./data:/app/data
       - ./repos:/srv/git
-    command: [ "npm", "start" ]
+      - ./ui:/app/ui
+      - ./dist:/app/dist
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./node_modules:/app/node_modules
+    command: [ "npm", "run", "watch" ]
     depends_on:
       - git-server
 

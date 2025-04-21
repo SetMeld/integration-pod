@@ -15,7 +15,9 @@
     "dev:ui": "cd ui && npx vite",
     "watch:ui": "cd ui && npx vite build --watch",
     "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data",
-    "watch": "concurrently \"npm:watch:server\" \"npm:watch:ui\""
+    "watch": "concurrently \"npm:watch:server\" \"npm:watch:ui\"",
+    "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
+    "docker:prod": "docker-compose -f docker-compose.yml up --build"
   },
   "repository": {
     "type": "git",
