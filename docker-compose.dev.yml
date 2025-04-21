@@ -1,31 +1,12 @@
 version: '3.8'
 services:
   node-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
+    platform: linux/amd64
     volumes:
       - ./src:/app/src
       - ./config:/app/config
-      - ./data:/app/data
-      - ./repos:/srv/git
       - ./ui:/app/ui
       - ./dist:/app/dist
-      - ./package.json:/app/package.json
-      - ./package-lock.json:/app/package-lock.json
-      - ./node_modules:/app/node_modules
-    command: [ "npm", "run", "watch" ]
-    depends_on:
-      - git-server
-
-  git-server:
-    build:
-      context: ./git-server
-      dockerfile: Dockerfile
-    ports:
-      - "2222:22"
-    volumes:
+      - ./data:/app/data
       - ./repos:/srv/git
-      - ./git-server/hooks:/etc/git-hooks
+    command: [ "npm", "run", "watch" ]

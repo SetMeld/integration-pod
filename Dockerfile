@@ -2,23 +2,26 @@ FROM node:20
 
 WORKDIR /app
 
-# Copy package.json and install deps
-COPY ./package*.json ./
-RUN npm install --omit=dev
+# Install server dependencies
+COPY package*.json ./
+RUN npm install
 
-# Copy Solid config and data (will mount host volume later)
-COPY ./config ./config
+# Install UI dependencies inside container
+COPY ./ui/package*.json ./ui/
+RUN cd ui && npm install
 
-# Copy the rest of the source (if needed)
-COPY ./dist ./dist
+# Copy the rest of the source
+COPY . .
 
-# Make sure the entrypoint has permission to read/write data
+RUN npm run build
+
+# Make sure data folder exists for runtime
 RUN mkdir -p /app/data && chown -R node:node /app/data
 
-# Switch to node user for better security
+# Use a non-root user for security
 USER node
 
 EXPOSE 3000
 
-CMD ["./node_modules/@solid/community-server/bin/server.js", \
-  "-c", "./config/config.json", "-m", "./", "-f", "./data"]
+# Optional: only needed for `docker compose` without `command:` override
+CMD ["npm", "start"]
