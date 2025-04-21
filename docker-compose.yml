@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  pod-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+      - ./repos:/srv/git
+    depends_on:
+      - git-server
+
+  git-server:
+    build:
+      context: ./git-server
+      dockerfile: Dockerfile
+    ports:
+      - "2222:22"
+    volumes:
+      - ./repos:/srv/git
+      - ./git-server/hooks:/etc/git-hooks

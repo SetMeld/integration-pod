@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build:server && npm run build:ui",
     "build:server": "npm run build:server:ts && npm run build:server:components",
     "build:server:components": "componentsjs-generator -s src -c dist/components -r iss -i .componentsignore",
     "build:server:ts": "tsc",
@@ -13,7 +14,7 @@
     "build:ui": "cd ui && npm install && npx vite build",
     "dev:ui": "cd ui && npx vite",
     "watch:ui": "cd ui && npx vite build --watch",
-    "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./",
+    "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data",
     "watch": "concurrently \"npm:watch:server\" \"npm:watch:ui\""
   },
   "repository": {

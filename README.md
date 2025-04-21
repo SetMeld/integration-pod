@@ -2,6 +2,12 @@
 
 This is a standard Solid pod with extra routes to handle deploying an integration. Going to the `./integration/*` route will give you a dashboard 
 
+## Run everything
+
+```bash
+
+```
+
 ## API
 
  - GET `./integration/api/integration`: Gets a list of all integrations
