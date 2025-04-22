@@ -7,6 +7,7 @@ RUN apt-get update && \
     apt-get install -y \
     openssh-server \
     git \
+    curl \
     tzdata && \
     ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
     dpkg-reconfigure --frontend noninteractive tzdata && \

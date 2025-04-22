@@ -7,6 +7,25 @@ import fs from "fs/promises";
 export function createApiRouter(base: string) {
   const apiRouter = express.Router();
 
+  /**
+   * ===========================================================================
+   * GIT COMMIT HOOK
+   * ===========================================================================
+   */
+  apiRouter.post("/git-commit-hook", bodyParser.json(), async (req, res) => {
+    console.log("============================================================");
+    console.log("Got commit hook");
+    console.log(req.body);
+    console.log("============================================================");
+
+    res.json({ success: true });
+  });
+
+  /**
+   * ===========================================================================
+   * AUTHENTICATED FUNCTIONS
+   * ===========================================================================
+   */
   apiRouter.use(createValidateWebId(base));
 
   /**

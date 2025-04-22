@@ -2,7 +2,9 @@
 
 while read oldrev newrev refname
 do
-  curl -X POST http://node-app:3000/git-commit-hook \
+  curl -X POST http://node-app:3000/.integration/api/git-commit-hook \
        -H "Content-Type: application/json" \
+       -H "X-Forwarded-Host: localhost:3000" \
+       -H "X-Forwarded-Proto: http" \
        -d "{\"repo\": \"$PWD\", \"ref\": \"$refname\", \"oldrev\": \"$oldrev\", \"newrev\": \"$newrev\"}"
 done

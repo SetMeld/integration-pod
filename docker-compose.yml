@@ -24,3 +24,5 @@ services:
       - ./repos:/srv/git
       - ./git-server/hooks:/etc/git-hooks
       - ./git-server/authorized_keys:/authorized_keys
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
