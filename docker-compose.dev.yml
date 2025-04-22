@@ -7,6 +7,4 @@ services:
       - ./config:/app/config
       - ./ui:/app/ui
       - ./dist:/app/dist
-      - ./data:/app/data
-      - ./repos:/srv/git
     command: [ "npm", "run", "watch" ]

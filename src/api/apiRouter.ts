@@ -152,10 +152,7 @@ export function createApiRouter(base: string) {
       throw new HttpError(400, "Invalid SSH key");
     }
 
-    // Special command to ensure security for SSH connections
-    const command =
-      "command='GIT_PROJECT_ROOT=/srv/git git-shell -c \"$SSH_ORIGINAL_COMMAND\"',no-port-forwarding,no-X11-forwarding,no-agent-forwarding";
-    const entry = `${command} ${sshKey.trim()}\n`;
+    const entry = `${sshKey.trim()}\n`;
 
     await fs.writeFile(AUTHORIZED_KEYS_PATH, entry, { mode: 0o600 });
     res.json({ success: true });

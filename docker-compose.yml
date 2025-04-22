@@ -7,9 +7,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./data:/app/data
-      - ./repos:/srv/git
-      - ./git-server/authorized_keys:/authorized_keys
+      - ./data/solid:/app/data
+      - ./data/repos:/srv/git
+      - ./data/authorized_keys:/authorized_keys
     command: [ "npm", "start" ]
     depends_on:
       - git-server
@@ -21,8 +21,6 @@ services:
     ports:
       - "2222:22"
     volumes:
-      - ./repos:/srv/git
+      - ./data/repos:/srv/git
       - ./git-server/hooks:/etc/git-hooks
-      - ./git-server/authorized_keys:/authorized_keys
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - ./data/authorized_keys:/authorized_keys
