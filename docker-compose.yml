@@ -9,6 +9,7 @@ services:
     volumes:
       - ./data/solid:/app/data
       - ./data/repos:/srv/git
+      - ./data/integrations:/app/integrations
       - ./data/authorized_keys:/authorized_keys
     command: [ "npm", "start" ]
     depends_on:

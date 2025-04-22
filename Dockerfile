@@ -17,6 +17,7 @@ RUN npm run build
 
 # Make sure data folder exists for runtime
 RUN mkdir -p /app/data && chown -R node:node /app/data
+RUN mkdir -p /app/integrations && chown -R node:node /app/integrations
 
 # Use a non-root user for security
 USER node

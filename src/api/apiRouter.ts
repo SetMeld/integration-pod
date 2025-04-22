@@ -3,6 +3,7 @@ import { createValidateWebId } from "./validateWebId";
 import bodyParser from "body-parser";
 import { HttpError } from "./HttpError";
 import fs from "fs/promises";
+import { postCommitHandler } from "./postCommit/postCommit.handler";
 
 export function createApiRouter(base: string) {
   const apiRouter = express.Router();
@@ -12,14 +13,7 @@ export function createApiRouter(base: string) {
    * GIT COMMIT HOOK
    * ===========================================================================
    */
-  apiRouter.post("/git-commit-hook", bodyParser.json(), async (req, res) => {
-    console.log("============================================================");
-    console.log("Got commit hook");
-    console.log(req.body);
-    console.log("============================================================");
-
-    res.json({ success: true });
-  });
+  apiRouter.post("/git-commit-hook", bodyParser.json(), postCommitHandler);
 
   /**
    * ===========================================================================
