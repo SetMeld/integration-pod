@@ -14,7 +14,8 @@ export default function SshKeyForm() {
   const onSubmit = useCallback(async () => {
     await setGitSshKey(sshKey);
     toast("Ssh Key Updated");
-  }, [sshKey]);
+    setSshKey("");
+  }, [sshKey, setGitSshKey]);
 
   return (
     <div>

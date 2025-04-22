@@ -2,3 +2,4 @@ node_modules
 dist
 data
 repos
+git-server/authorized_keys

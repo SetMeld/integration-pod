@@ -4,9 +4,17 @@ This is a standard Solid pod with extra routes to handle deploying an integratio
 
 ## Run everything
 
+One time before running docker:
 ```bash
-
+sudo npm run setup
 ```
+
+Then run docker
+```bash
+npm run docker:prod
+```
+
+Alernatively you can run `npm run docker:dev` to watch for changes. Note, on some machines, the UI may have trouble building so you can run `npm run watch:ui` in a separate window to also enable wathing the UI.
 
 ## API
 

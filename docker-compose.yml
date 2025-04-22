@@ -9,6 +9,7 @@ services:
     volumes:
       - ./data:/app/data
       - ./repos:/srv/git
+      - ./git-server/authorized_keys:/authorized_keys
     command: [ "npm", "start" ]
     depends_on:
       - git-server
@@ -22,3 +23,4 @@ services:
     volumes:
       - ./repos:/srv/git
       - ./git-server/hooks:/etc/git-hooks
+      - ./git-server/authorized_keys:/authorized_keys

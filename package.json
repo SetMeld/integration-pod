@@ -16,8 +16,9 @@
     "watch:ui": "cd ui && npx vite build --watch",
     "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data",
     "watch": "concurrently \"npm:watch:server\" \"npm:watch:ui\"",
-    "docker:dev": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
-    "docker:prod": "docker-compose -f docker-compose.yml up --build"
+    "docker:dev": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
+    "docker:prod": "docker compose -f docker-compose.yml up --build",
+    "setup": "bash scripts/setup.sh"
   },
   "repository": {
     "type": "git",
@@ -48,6 +49,7 @@
   "dependencies": {
     "@solid/access-token-verifier": "^2.1.0",
     "@solid/community-server": "^7.1.7",
+    "body-parser": "^2.2.0",
     "componentsjs": "^5.5.1",
     "express": "^5.1.0"
   },

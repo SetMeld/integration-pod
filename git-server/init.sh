@@ -1,14 +1,16 @@
 #!/bin/bash
 
-# Create a git-shell only environment
+# Set up Git-only shell
 chsh -s $(which git-shell) git
 
-# Authorize any keys present
-touch /home/git/.ssh/authorized_keys
-chown git:git /home/git/.ssh/authorized_keys
+# Ensure authorized_keys is linked correctly
+mkdir -p /home/git/.ssh
+ln -sf /authorized_keys /home/git/.ssh/authorized_keys
+chown -R git:git /home/git/.ssh
+chmod 700 /home/git/.ssh
 chmod 600 /home/git/.ssh/authorized_keys
 
-# Set up hooks
+# Set up repo hooks
 HOOK_DIR="/etc/git-hooks"
 for repo in /srv/git/*.git; do
   if [ -d "$repo/hooks" ]; then

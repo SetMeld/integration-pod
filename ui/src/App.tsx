@@ -6,7 +6,7 @@ export default function App() {
   return (
     <BrowserSolidLdoProvider>
       <AppRouter />
-      <Toaster />
+      <Toaster containerStyle={{zIndex: 99999}} />
     </BrowserSolidLdoProvider>
   );
 }
