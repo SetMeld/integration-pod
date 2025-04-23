@@ -51,7 +51,8 @@
     "@solid/community-server": "^7.1.7",
     "body-parser": "^2.2.0",
     "componentsjs": "^5.5.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-remove-route": "^1.0.0"
   },
   "types": "./dist/index.d.ts",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod",

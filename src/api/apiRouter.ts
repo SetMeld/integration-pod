@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import { HttpError } from "./HttpError";
 import fs from "fs/promises";
 import { postCommitHandler } from "./postCommit/postCommit.handler";
+import { triggers } from "../triggers/triggers";
 
 export function createApiRouter(base: string) {
   const apiRouter = express.Router();
@@ -14,6 +15,16 @@ export function createApiRouter(base: string) {
    * ===========================================================================
    */
   apiRouter.post("/git-commit-hook", bodyParser.json(), postCommitHandler);
+
+  /**
+   * ===========================================================================
+   * TRIGGERS
+   * ===========================================================================
+   */
+  apiRouter.use(
+    "/webhook",
+    triggers.webhook.handleRequest.bind(triggers.webhook),
+  );
 
   /**
    * ===========================================================================

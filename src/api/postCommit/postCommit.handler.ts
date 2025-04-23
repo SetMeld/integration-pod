@@ -3,6 +3,8 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import fs from "fs/promises";
 import path from "path";
+import { triggers } from "../../triggers/triggers";
+import { WebhookTriggerConfig } from "../../triggers/WebhookTrigger";
 
 const execAsync = promisify(exec);
 
@@ -35,12 +37,25 @@ export const postCommitHandler: RequestHandler = async (req, res) => {
     // Load integration.json
     const integrationJsonPath = path.join(clonePath, "integration.json");
     const integrationDataRaw = await fs.readFile(integrationJsonPath, "utf-8");
-    const integrationData = JSON.parse(integrationDataRaw);
+    const integrationData = JSON.parse(integrationDataRaw) as {
+      trigger: { type: string };
+    };
 
     console.log(
       `[HOOK] integration.json loaded for ${repoName}`,
       integrationData,
     );
+
+    // TODO: remove the trigger of the previous service if it was different
+    const trigger = triggers[integrationData.trigger.type as "webhook"];
+    if (!trigger) {
+      throw new Error(
+        `Trigger type ${integrationData.trigger.type} not found.`,
+      );
+    }
+
+    trigger.unregister(repoName);
+    trigger.register(repoName, integrationData.trigger as WebhookTriggerConfig);
 
     res.json({
       success: true,
