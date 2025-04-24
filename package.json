@@ -55,7 +55,8 @@
     "componentsjs": "^5.5.1",
     "express": "^5.1.0",
     "express-remove-route": "^1.0.0",
-    "multer": "^1.4.5-lts.2"
+    "multer": "^1.4.5-lts.2",
+    "penny-pod-inspector": "^0.1759682266.9666944588"
   },
   "types": "./dist/index.d.ts",
   "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod",

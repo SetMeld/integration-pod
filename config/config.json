@@ -30,7 +30,6 @@
     "css:config/storage/middleware/default.json",
     "css:config/util/auxiliary/acl.json",
     "css:config/util/identifiers/suffix.json",
-    "css:config/util/index/default.json",
     "css:config/util/logging/winston.json",
     "css:config/util/representation-conversion/default.json",
     "css:config/util/resource-locker/file.json",
@@ -51,6 +50,28 @@
       "@type": "AccountInitializer",
       "email": "test@example.com",
       "password": "secret!"
+    },
+    {
+      "comment": "Serve Penny as default representation",
+      "@id": "urn:solid-server:default:DefaultUiConverter",
+      "@type": "ConstantConverter",
+      "contentType": "text/html",
+      "filePath": "./node_modules/penny-pod-inspector/server-ui/index.html",
+      "options_container": true,
+      "options_document": true,
+      "options_minQuality": 1
+    },
+    {
+      "comment": "Serve Penny static files.",
+      "@id": "urn:solid-server:default:StaticAssetHandler",
+      "@type": "StaticAssetHandler",
+      "assets": [
+        {
+          "@type": "StaticAssetEntry",
+          "relativeUrl": "/server-ui/",
+          "filePath": "./node_modules/penny-pod-inspector/server-ui/"
+        }
+      ]
     }
   ]
 }

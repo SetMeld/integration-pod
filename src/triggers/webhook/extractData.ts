@@ -46,7 +46,6 @@ export async function extractData(
   res: Response,
   config: WebhookTriggerConfig,
 ): Promise<unknown> {
-  console.log("================", config);
   const extractor = extractors[config.accept];
   if (!extractor) {
     throw new HttpError(
