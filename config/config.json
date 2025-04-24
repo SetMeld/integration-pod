@@ -56,7 +56,7 @@
       "@id": "urn:solid-server:default:DefaultUiConverter",
       "@type": "ConstantConverter",
       "contentType": "text/html",
-      "filePath": "./node_modules/penny-pod-inspector/server-ui/index.html",
+      "filePath": "./node_modules/penny-pod-inspector-simple/server-ui/index.html",
       "options_container": true,
       "options_document": true,
       "options_minQuality": 1
@@ -69,7 +69,7 @@
         {
           "@type": "StaticAssetEntry",
           "relativeUrl": "/server-ui/",
-          "filePath": "./node_modules/penny-pod-inspector/server-ui/"
+          "filePath": "./node_modules/penny-pod-inspector-simple/server-ui/"
         }
       ]
     }
