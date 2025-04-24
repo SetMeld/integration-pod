@@ -1,6 +1,7 @@
 import express, { Express } from "express";
 import { createApiRouter } from "./api/apiRouter";
 import path from "path";
+import { loadAllTriggers } from "./triggers/loadAllTriggers";
 
 export function createApp(base: string): Express {
   const app = express();
@@ -15,6 +16,8 @@ export function createApp(base: string): Express {
   app.get(new RegExp("^/\\.integration/.*"), (req, res) => {
     res.sendFile(path.join(uiPath, "index.html"));
   });
+
+  loadAllTriggers();
 
   return app;
 }

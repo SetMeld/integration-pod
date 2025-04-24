@@ -170,6 +170,9 @@ export function createApiRouter(base: string) {
    */
   apiRouter.use(
     (err: unknown, req: Request, res: Response, _next: NextFunction) => {
+      if (err instanceof Error) {
+        console.error(err);
+      }
       const error = HttpError.from(err);
       res.status(error.status).send(error.message);
     },

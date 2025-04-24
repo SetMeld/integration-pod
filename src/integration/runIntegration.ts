@@ -1,5 +1,7 @@
 import path from "path";
 import { promises as fs } from "fs";
+import { IntegrationReturn } from "./IntegrationReturn";
+import { handleIntegrationReturn } from "./handleIntegrationReturn";
 
 export async function runIntegration(id: string, data: unknown): Promise<void> {
   // Step 1: Determine project path
@@ -25,5 +27,6 @@ export async function runIntegration(id: string, data: unknown): Promise<void> {
   }
 
   // Step 5: Run the function with provided data
-  return await mod(data);
+  const integrationReturn = (await mod(data)) as IntegrationReturn;
+  await handleIntegrationReturn(integrationReturn);
 }

@@ -1,13 +1,15 @@
-import { HttpError } from "../api/HttpError";
-import { runIntegration } from "../integration/runIntegration";
-import { Trigger } from "./Trigger";
-import { Request, Response } from "express";
+import { HttpError } from "../../api/HttpError";
+import { runIntegration } from "../../integration/runIntegration";
+import { Trigger } from "../Trigger";
+import { request, Request, Response } from "express";
+import { extractData } from "./extractData";
 
 export interface WebhookTriggerConfig {
   type: "webhook";
   path: string;
   authKey: string;
   method: string;
+  accept: string;
 }
 
 export class WebhookTrigger implements Trigger<WebhookTriggerConfig> {
@@ -38,6 +40,10 @@ export class WebhookTrigger implements Trigger<WebhookTriggerConfig> {
     const subPath = original.slice(base.length) || "/";
 
     const pathMappingInfo = this.pathMapping[subPath];
+
+    console.log(subPath);
+    console.log(pathMappingInfo[1].method, req.method);
+
     if (!pathMappingInfo || pathMappingInfo[1].method !== req.method) {
       throw new HttpError(404, "Webhook route not found.");
     }
@@ -49,9 +55,11 @@ export class WebhookTrigger implements Trigger<WebhookTriggerConfig> {
       throw new HttpError(401, "Webhook key is invalid.");
     }
 
-    await runIntegration(id, "example data");
+    // Extract data for integration
+    const requestData = await extractData(req, res, config);
+
+    await runIntegration(id, requestData);
 
     res.send(`${config.type}, ${config.path} ${id}`);
-    // TODO: run the integration
   }
 }
