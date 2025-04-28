@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   node-app:
     build:
@@ -11,7 +10,6 @@ services:
       - ./data/repos:/srv/git
       - ./data/integrations:/app/integrations
       - ./data/authorized_keys:/authorized_keys
-    command: [ "npm", "start" ]
     depends_on:
       - git-server
 

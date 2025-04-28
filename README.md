@@ -16,6 +16,18 @@ npm run docker:prod
 
 Alernatively you can run `npm run docker:dev` to watch for changes. Note, on some machines, the UI may have trouble building so you can run `npm run watch:ui` in a separate window to also enable wathing the UI.
 
+## Hacks to Set Up the Server
+
+The UI for this server isn't completely automatic yet. Therefore, there are some manual setup things you'll need to do:
+
+### 1. Create an Admin Account:
+
+ - On the main page (for example http://localhost:3000/), click the "Sign up for an account."
+ - Create an account with your username and password.
+ - Click the "Create Pod" link.
+ - Ensure that the name of this Pod is "admin"
+
+
 ## API
 
  - GET `./integration/api/integration`: Gets a list of all integrations

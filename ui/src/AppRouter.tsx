@@ -18,10 +18,9 @@ import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import { useSolidAuth } from "@ldo/solid-react";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent } from "react";
 import SshKeyForm from "./pages/SshKey/SshKeyForm";
 import { IntegrationPage } from "./pages/Integration/IntegrationPage";
-import { getDefaultSession } from "@inrupt/solid-client-authn-browser";
 
 export default function AppRouter() {
   return (
@@ -70,9 +69,11 @@ export default function AppRouter() {
 }
 
 const ProtectedRoute: FunctionComponent = () => {
-  const { session } = useSolidAuth();
+  const { session, ranInitialAuthCheck } = useSolidAuth();
 
-  if (!session.isLoggedIn) {
+  if (!ranInitialAuthCheck) {
+    return <></>;
+  } else if (!session.isLoggedIn) {
     return <SignIn />;
   }
   return <Outlet />;

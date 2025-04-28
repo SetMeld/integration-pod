@@ -16,6 +16,17 @@ export interface ResourceUpdateInformation {
   data: string | Express.Multer.File;
 }
 
+export interface AccountChanges {
+  overwrite?: boolean;
+  podName: string;
+  account: {
+    email: string;
+    password: string;
+  };
+  externalWebId?: string;
+}
+
 export interface IntegrationReturn {
-  files: (ResourceUpdateInformation | ContainerUpdateInformation)[];
+  files?: (ResourceUpdateInformation | ContainerUpdateInformation)[];
+  accounts?: AccountChanges[];
 }

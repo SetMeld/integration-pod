@@ -14,14 +14,18 @@ const extractors: Record<
   "form/multipart": async (
     req: Request,
     res: Response,
-  ): Promise<Express.Multer.File[]> => {
+  ): Promise<{
+    fields: Record<string, string>;
+    files: Express.Multer.File[];
+  }> => {
     await new Promise<void>((resolve, reject) => {
       upload(req, res, (err) => {
         if (err) return reject(err);
         resolve();
       });
     });
-    return Array.isArray(req.files)
+
+    const files = Array.isArray(req.files)
       ? req.files
       : req.files
         ? Object.values(req.files).reduce((agg, file) => {
@@ -29,6 +33,23 @@ const extractors: Record<
             return agg;
           }, [])
         : [];
+
+    const fields: Record<string, string> = Object.entries(
+      req.body || {},
+    ).reduce(
+      (acc, [key, value]) => {
+        acc[key] =
+          typeof value === "string"
+            ? value
+            : Array.isArray(value)
+              ? value[0]
+              : String(value);
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+    return { fields, files };
   },
   "application/json": async (req: Request, res: Response): Promise<object> => {
     await new Promise<void>((resolve, reject) => {

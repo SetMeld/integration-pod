@@ -1,10 +1,11 @@
-version: '3.8'
 services:
   node-app:
-    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: node:20
+    working_dir: /app
+    ports:
+      - "3000:3000"
     volumes:
-      - ./src:/app/src
-      - ./config:/app/config
-      - ./ui:/app/ui
-      - ./dist:/app/dist
-    command: [ "npm", "run", "watch" ]
+      - .:/app

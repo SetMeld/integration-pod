@@ -41,9 +41,6 @@ export class WebhookTrigger implements Trigger<WebhookTriggerConfig> {
 
     const pathMappingInfo = this.pathMapping[subPath];
 
-    console.log(subPath);
-    console.log(pathMappingInfo[1].method, req.method);
-
     if (!pathMappingInfo || pathMappingInfo[1].method !== req.method) {
       throw new HttpError(404, "Webhook route not found.");
     }
