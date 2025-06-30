@@ -1,0 +1,7 @@
+{
+  "aliases": {
+    "components": "~/components",
+    "lib": "~/lib",
+    "resourceViews": "~/resourceViews"
+  }
+}

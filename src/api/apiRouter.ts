@@ -42,7 +42,7 @@ export function createApiRouter(base: string) {
     res.json([
       {
         id: "1",
-        name: "Some Integration",
+        name: "Salesforce Integration",
         targetFile: "/integration-data/1.ttl",
         gitAddress: "ssh://localhost:2222/srv/git/1.git",
         status: {
@@ -51,37 +51,9 @@ export function createApiRouter(base: string) {
       },
       {
         id: "2",
-        name: "Another Integration",
+        name: "Custom SQL Integration",
         targetFile: "/integration-data/2.ttl",
         gitAddress: "ssh://localhost:2222/srv/git/2.git",
-        status: {
-          type: "ok",
-        },
-      },
-      {
-        id: "3",
-        name: "Hello Integration",
-        targetFile: "/integration-data/3.ttl",
-        gitAddress: "ssh://localhost:2222/srv/git/3.git",
-        status: {
-          type: "error",
-          message: "There was some kind of error here. I don't like it.",
-        },
-      },
-      {
-        id: "4",
-        name: "Weehee Integration",
-        targetFile: "/integration-data/4.ttl",
-        gitAddress: "ssh://localhost:2222/srv/git/4.git",
-        status: {
-          type: "ok",
-        },
-      },
-      {
-        id: "5",
-        name: "My cool Integration",
-        targetFile: "/integration-data/5.ttl",
-        gitAddress: "ssh://localhost:2222/srv/git/5.git",
         status: {
           type: "ok",
         },
@@ -103,10 +75,10 @@ export function createApiRouter(base: string) {
 
   apiRouter.get("/integration/:id", (req, res) => {
     res.json({
-      id: "5",
-      name: "My cool Integration",
-      targetFile: "/integration-data/1.ttl",
-      gitAddress: "ssh://localhost:2222/srv/git/5.git",
+      id: "2",
+      name: "Custom SQL Integration",
+      targetFile: "/integration-data/2.ttl",
+      gitAddress: "ssh://localhost:2222/srv/git/2.git",
       status: {
         type: "ok",
       },
