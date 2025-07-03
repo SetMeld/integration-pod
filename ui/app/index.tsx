@@ -9,16 +9,13 @@ import "../global.css";
 
 
 export function Screen() {
-  const mode = process.env.EXPO_PUBLIC_IS_SERVER_HOSTED
-    ? 'server-ui'
-    : 'standalone-app';
 
   return (
     <SafeAreaProvider>
       <StatusBar />
       <DataBrowser
         views={[ContainerConfig, RawCodeConfig]}
-        mode={mode}
+        mode={'server-ui'}
         renderHomepage={() => <Text>Hopepage</Text>}
         renderLogo={() => <Text>Logo</Text>}
       />

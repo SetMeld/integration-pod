@@ -2,3 +2,5 @@ node_modules
 dist
 data
 old-data
+infra/hosts
+infra/secrets.yml

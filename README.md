@@ -16,6 +16,40 @@ npm run docker:prod
 
 Alernatively you can run `npm run docker:dev` to watch for changes. Note, on some machines, the UI may have trouble building so you can run `npm run watch:ui` in a separate window to also enable wathing the UI.
 
+## Building and publishing
+
+Create Secrets
+```bash
+cd infra
+ansible-vault create secrets.yml
+ansible-vault edit secrets.yml
+```
+
+Add secrets like the following
+```bash
+dockerhub_username: exampleuser
+dockerhub_password: examplepass
+domain: example.com
+email: example@example.com
+```
+
+Add hosts
+```bash
+[web]
+your-server-ip ansible_user=ubuntu
+```
+
+Build and publish
+```bash
+docker buildx create --use
+docker buildx build --platform linux/amd64 -t jaxoncreed/integration-pod:latest --push .
+```
+
+Run Ansible
+```bash
+ansible-playbook -i hosts playbook.yml --ask-vault-pass
+```
+
 ## Hacks to Set Up the Server
 
 The UI for this server isn't completely automatic yet. Therefore, there are some manual setup things you'll need to do:

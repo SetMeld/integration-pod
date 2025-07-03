@@ -2,6 +2,9 @@ FROM node:20
 
 WORKDIR /app
 
+# Copy the rest of the source
+COPY . .
+
 # Install server dependencies
 COPY package*.json ./
 RUN npm install
@@ -10,8 +13,6 @@ RUN npm install
 COPY ./ui/package*.json ./ui/
 RUN cd ui && npm install
 
-# Copy the rest of the source
-COPY . .
 
 RUN npm run build
 
