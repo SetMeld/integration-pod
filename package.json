@@ -18,7 +18,7 @@
     "build:ui": "cd ui && npm install && npm run build:server",
     "dev:ui": "cd ui && npm run dev:server-hosted",
     "dev:server": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -l debug",
-    "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data"
+    "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -b ${BASE_URL:-http://localhost:3000}"
   },
   "repository": {
     "type": "git",

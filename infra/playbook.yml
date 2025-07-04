@@ -44,8 +44,15 @@
         state: started
         restart_policy: always
         recreate: true
+        env:
+          BASE_URL: "https://{{ domain }}/"
         ports:
           - "3000:3000"
+        volumes:
+          - /mnt/setmeld-data/solid:/app/data
+          - /mnt/setmeld-data/repos:/srv/git
+          - /mnt/setmeld-data/integrations:/app/integrations
+          - /mnt/setmeld-data/authorized_keys:/authorized_keys
 
     - name: Set up NGINX config
       template:
