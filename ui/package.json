@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "expo": "^53.0.9",
-    "linked-data-browser": "^0.0.1",
+    "linked-data-browser": "^0.0.2",
     "lucide-react-native": "^0.511.0",
     "nativewind": "^4.1.23",
     "react": "19.0.0",
