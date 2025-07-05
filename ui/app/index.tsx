@@ -6,6 +6,7 @@ import { ContainerConfig } from '~/resourceViews/Container/ContainerConfig';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
 import "../global.css";
+import { IntegrationDashboardConfig } from 'resourceViews/integrationDashboard/IntegrationDashboardConfig';
 
 
 export function Screen() {
@@ -14,7 +15,7 @@ export function Screen() {
     <SafeAreaProvider>
       <StatusBar />
       <DataBrowser
-        views={[ContainerConfig, RawCodeConfig]}
+        views={[IntegrationDashboardConfig, ContainerConfig, RawCodeConfig]}
         mode={'server-ui'}
         renderHomepage={() => <Text>Hopepage</Text>}
         renderLogo={() => <Text>Logo</Text>}

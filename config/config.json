@@ -34,7 +34,8 @@
     "css:config/util/representation-conversion/default.json",
     "css:config/util/resource-locker/file.json",
     "css:config/util/variables/default.json",
-    "iss:config/integration-server.json"
+    "iss:config/integration-server.json",
+    "iss:config/create-login.json"
   ],
   "@graph": [
     {
@@ -81,6 +82,45 @@
           "@type": "StaticAssetEntry",
           "relativeUrl": "/.ui-static/",
           "filePath": "./ui/dist-server/"
+        }
+      ]
+    },
+    {
+      "@type": "Override",
+      "overrideInstance": {
+        "@id": "urn:solid-server:default:PromptHandler"
+      },
+      "overrideSteps": [
+        {
+          "@type": "OverrideListInsertAt",
+          "overrideParameter": {
+            "@id": "PromptHandler:_promptRoutes"
+          },
+          "overrideTarget": 2,
+          "overrideValue": {
+            "PromptHandler:_promptRoutes_key": "create",
+            "PromptHandler:_promptRoutes_value": {
+              "@id": "urn:solid-server:default:CreateLoginPasswordRoute"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Override",
+      "overrideInstance": {
+        "@id": "urn:solid-server:default:PromptFactory"
+      },
+      "overrideSteps": [
+        {
+          "@type": "OverrideListInsertAt",
+          "overrideParameter": {
+            "@id": "SequenceHandler:_handlers"
+          },
+          "overrideTarget": 1,
+          "overrideValue": {
+            "@type": "CreatePromptFactory"
+          }
         }
       ]
     }
