@@ -7,5 +7,7 @@ services:
     working_dir: /app
     ports:
       - "3000:3000"
+    environment:
+      SHELL: /bin/bash # Fix chokidar-cli error
     volumes:
       - .:/app

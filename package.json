@@ -9,7 +9,7 @@
     "docker:dev": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
     "docker:prod": "docker compose -f docker-compose.yml up --build",
     "setup": "bash scripts/setup.sh",
-    "watch": "concurrently \"npm:watch:server\" \"npm:watch:ui\"",
+    "watch": "concurrently \"npm:watch:server\"",
     "watch:server": "nodemon --watch src --watch config --ext ts,json --exec \"npm run build:server && npm run dev:server\"",
     "watch:ui": "cd ui && npm run build:server:watch",
     "build:server": "npm run build:server:ts && npm run build:server:components",
