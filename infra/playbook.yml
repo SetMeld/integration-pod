@@ -37,6 +37,27 @@
         source: pull
         force_source: true
 
+    - name: Create data directories on host and set permissions
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: 1000
+        group: 1000
+        mode: '0755'
+        recurse: yes
+      loop:
+        - /mnt/setmeld-data/solid
+        - /mnt/setmeld-data/repos
+        - /mnt/setmeld-data/integrations
+
+    - name: Ensure authorized_keys file exists
+      file:
+        path: /mnt/setmeld-data/authorized_keys
+        state: touch
+        owner: 1000
+        group: 1000
+        mode: '0600'
+
     - name: Run container
       docker_container:
         name: server

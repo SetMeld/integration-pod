@@ -33,7 +33,7 @@ domain: example.com
 email: example@example.com
 ```
 
-Add hosts
+Add hosts (`./infra/host`)
 ```bash
 [web]
 your-server-ip ansible_user=ubuntu
