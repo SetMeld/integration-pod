@@ -4,16 +4,13 @@ import { IntegrationInformation } from "../../../../common/IntegrationInformatio
 import { IntegrationCard } from "./IntegrationCard";
 import { Button } from "~/components/ui/button";
 import { useCreateIntegration } from "../api/useCreateIntegration";
-import { useNavigate } from "react-router";
 import { useDialog } from "~/components/nav/DialogProvider";
 import { View } from "react-native";
 
-export default function Home() {
+export function IntegrationDashboard() {
   const getIntegrations = useGetIntegrations();
   const createIntegration = useCreateIntegration();
   const { prompt } = useDialog();
-
-  const navigate = useNavigate();
 
   const [integrations, setIntegrations] = useState<IntegrationInformation[]>([]);
 
@@ -30,7 +27,7 @@ export default function Home() {
     setIntegrations((oldIntegrations) => {
       return [...oldIntegrations, integration]
     });
-    navigate(`/.integration/integration/${integration.id}`);
+    // navigate(`/.integration/integration/${integration.id}`);
   }, []);
 
   return (

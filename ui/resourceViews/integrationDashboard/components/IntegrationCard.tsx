@@ -1,17 +1,14 @@
 import { FunctionComponent } from "react";
 import { IntegrationInformation } from "../../../../common/IntegrationInformation";
 import { Badge } from "~/components/ui/badge";
-import { useNavigate } from "react-router";
 import { TouchableOpacity, View } from "react-native";
 import { Card } from "~/components/ui/card";
 
 export const IntegrationCard: FunctionComponent<{
   integration: IntegrationInformation
 }> = ({ integration }) => {
-  const navigate = useNavigate();
-
   return (
-    <TouchableOpacity onPress={() => navigate(`/.integration/integration/${integration.id}`)}>
+    <TouchableOpacity onPress={() => {}}>
       <Card className='w-full max-w-sm' >
         <View className="flex items-end justify-between mt-0">
           <View>
