@@ -5,6 +5,8 @@ module.exports = {
   darkMode: 'class',
   content: [
     './app/**/*.{ts,tsx}',
+    './resourceViews/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
     './node_modules/linked-data-browser/components/**/*.{ts,tsx}',
     './node_modules/linked-data-browser/lib/**/*.{ts,tsx}',
     './node_modules/linked-data-browser/resourceViews/**/*.{ts,tsx}',
