@@ -5,6 +5,12 @@ import { HttpError } from "./HttpError";
 import fs from "fs/promises";
 import { postCommitHandler } from "./postCommit/postCommit.handler";
 import { triggers } from "../triggers/triggers";
+import { getLogsHandler, getLogsListHandler } from "./logs/getLogs";
+import { generalLogger } from "../utils/logger";
+import { createIntegration } from "../integration/createIntegration";
+import { listIntegrations } from "../integration/listIntegrations";
+import { getIntegration } from "../integration/getIntegration";
+import { CreateIntegrationRequest } from "../../common/IntegrationInformation";
 
 export function createApiRouter(base: string) {
   const apiRouter = express.Router();
@@ -38,51 +44,35 @@ export function createApiRouter(base: string) {
    * ITEGRATION FUNCTIONS
    * ===========================================================================
    */
-  apiRouter.get("/integration", (req, res) => {
-    res.json([
-      {
-        id: "1",
-        name: "Salesforce Integration",
-        targetFile: "/integration-data/1.ttl",
-        gitAddress: "ssh://localhost:2222/srv/git/1.git",
-        status: {
-          type: "ok",
-        },
-      },
-      {
-        id: "2",
-        name: "Custom SQL Integration",
-        targetFile: "/integration-data/2.ttl",
-        gitAddress: "ssh://localhost:2222/srv/git/2.git",
-        status: {
-          type: "ok",
-        },
-      },
-    ]);
+  apiRouter.get("/integration", async (req, res, next) => {
+    console.log("GETTING INTEGRATIONS");
+    try {
+      const integrations = await listIntegrations();
+      res.json(integrations);
+    } catch (error) {
+      next(error);
+    }
   });
 
-  apiRouter.post("/integration", (req, res) => {
-    res.json({
-      id: "6",
-      name: "Some Name",
-      targetFile: "/integration-data/6.ttl",
-      gitAddress: "ssh://localhost:2222/srv/git/6.git",
-      status: {
-        type: "ok",
-      },
-    });
+  apiRouter.post("/integration", async (req, res, next) => {
+    console.log("Received inegration request!", req.body);
+    try {
+      const request: CreateIntegrationRequest = req.body;
+      const result = await createIntegration(request);
+      res.json(result);
+    } catch (error) {
+      next(error);
+    }
   });
 
-  apiRouter.get("/integration/:id", (req, res) => {
-    res.json({
-      id: "2",
-      name: "Custom SQL Integration",
-      targetFile: "/integration-data/2.ttl",
-      gitAddress: "ssh://localhost:2222/srv/git/2.git",
-      status: {
-        type: "ok",
-      },
-    });
+  apiRouter.get("/integration/:id", async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const integration = await getIntegration(id);
+      res.json(integration);
+    } catch (error) {
+      next(error);
+    }
   });
 
   apiRouter.put("/integration/:id", (req, res) => {
@@ -102,6 +92,13 @@ export function createApiRouter(base: string) {
    * LOGS
    * ===========================================================================
    */
+  // Get list of available log files for an integration
+  apiRouter.get("/integration/:integrationName/logs", getLogsListHandler);
+
+  // Get specific log file content
+  apiRouter.get("/integration/:integrationName/logs/:type", getLogsHandler);
+
+  // Legacy endpoints for backward compatibility
   apiRouter.get("/integration/:id/log/deploy", (req, res) => {
     res.send("These are deploy logs.");
   });
@@ -143,7 +140,18 @@ export function createApiRouter(base: string) {
   apiRouter.use(
     (err: unknown, req: Request, res: Response, _next: NextFunction) => {
       if (err instanceof Error) {
-        console.error(err);
+        generalLogger.error("API error", {
+          error: err.message,
+          stack: err.stack,
+          url: req.url,
+          method: req.method,
+        });
+      } else {
+        generalLogger.error("Unknown API error", {
+          error: String(err),
+          url: req.url,
+          method: req.method,
+        });
       }
       const error = HttpError.from(err);
       res.status(error.status).send(error.message);

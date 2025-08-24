@@ -10,6 +10,8 @@ services:
       - ./data/repos:/srv/git
       - ./data/integrations:/app/integrations
       - ./data/authorized_keys:/authorized_keys
+      - ./data/general-logs:/app/general-logs
+      - ./data/integrations-meta:/app/integrations-meta
     depends_on:
       - git-server
 

@@ -1,0 +1,36 @@
+# <%= displayName %>
+
+  This is an integration for the Integration Pod.
+
+  ## Configuration
+
+  - **Target File**: `<%= targetFile %>`
+    - **Integration ID**: `<%= integrationId %>`
+      - **Created**: <%= createdAt %>
+
+        ## Usage
+
+        This integration can be run by the Integration Pod system. The main entry point is `index.js`.
+
+        ## Development
+
+        To modify this integration:
+
+        1. Edit the `index.js` file to implement your integration logic
+        2. The integration receives data as a parameter and should return a result object
+        3. Use `console.log()` for logging - it will be captured by the system
+
+        ## Example
+
+        ```javascript
+        module.exports = async function(data) {
+        // Your integration logic here
+        console.log("Processing data:", data);
+
+        // Return result
+        return {
+        success: true,
+        message: "Integration completed successfully"
+        };
+        };
+        ```

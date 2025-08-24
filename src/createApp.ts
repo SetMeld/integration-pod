@@ -2,8 +2,12 @@ import express, { Express } from "express";
 import { createApiRouter } from "./api/apiRouter";
 import path from "path";
 import { loadAllTriggers } from "./triggers/loadAllTriggers";
+import { initializeLogging } from "./utils/initLogging";
 
-export function createApp(base: string): Express {
+export async function createApp(base: string): Promise<Express> {
+  // Initialize logging system
+  await initializeLogging();
+
   const app = express();
 
   const apiRouter = createApiRouter(base);
