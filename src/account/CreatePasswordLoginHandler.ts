@@ -1,6 +1,5 @@
 import { boolean, object, string } from "yup";
 import {
-  getLoggerFor,
   assertOidcInteraction,
   finishInteraction,
   type JsonRepresentation,
@@ -37,8 +36,6 @@ export class CreatePasswordLoginHandler
   extends JsonInteractionHandler
   implements JsonView
 {
-  protected readonly logger = getLoggerFor(this);
-
   private readonly createAccountHandler: CreateAccountHandler;
   private readonly createPasswordHandler: CreatePasswordHandler;
   private readonly createPodHandler: CreatePodHandler;

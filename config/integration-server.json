@@ -1,6 +1,6 @@
 {
   "@context": [
-    "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^7.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^8.0.0/components/context.jsonld",
     "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod/^1.0.0/components/context.jsonld"
   ],
   "@graph": [
@@ -13,10 +13,10 @@
         {
           "@type": "OverrideListInsertBefore",
           "overrideParameter": {
-            "@id": "WaterfallHandler:_handlers"
+            "@id": "StatusWaterfallHandler:_handlers"
           },
           "overrideTarget": {
-            "@id": "urn:solid-server:default:LdpHandler"
+            "@id": "urn:solid-server:default:IdentityProviderHandler"
           },
           "overrideValue": {
             "@id": "urn:solid-server:default:IntegrationRouteHandler"

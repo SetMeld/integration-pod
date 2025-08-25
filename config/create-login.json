@@ -1,6 +1,6 @@
 {
   "@context": [
-    "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^7.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^8.0.0/components/context.jsonld",
     "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod/^1.0.0/components/context.jsonld"
   ],
   "@graph": [
@@ -38,7 +38,7 @@
     },
     {
       "@id": "urn:solid-server:default:InteractionRouteHandler",
-      "@type": "WaterfallHandler",
+      "@type": "StatusWaterfallHandler",
       "handlers": [
         {
           "@id": "urn:solid-server:default:CreateLoginPasswordRouter"

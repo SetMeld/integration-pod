@@ -50,7 +50,7 @@
   "dependencies": {
     "@ldo/connected-solid": "^1.0.0-alpha.28",
     "@solid/access-token-verifier": "^2.1.0",
-    "@solid/community-server": "^7.1.7",
+    "@solid/community-server": "^8.0.0-alpha.0",
     "body-parser": "^2.2.0",
     "componentsjs": "^5.5.1",
     "express": "^5.1.0",
