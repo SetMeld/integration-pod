@@ -2,10 +2,12 @@ import path from "path";
 import { promises as fs } from "fs";
 import { IntegrationReturn } from "./IntegrationReturn";
 import { handleIntegrationReturn } from "./handleIntegrationReturn";
+import { getGlobals } from "../globals";
 
 export async function runIntegration(id: string, data: unknown): Promise<void> {
+  const { integrationCodePath } = getGlobals();
   // Step 1: Determine project path
-  const integrationPath = path.join("/app/integrations", id);
+  const integrationPath = path.join(integrationCodePath, id);
 
   // Step 2: Load package.json to get "main" field
   const packageJsonPath = path.join(integrationPath, "package.json");

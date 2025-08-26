@@ -1,12 +1,12 @@
+import { getGlobals } from "../globals";
 import { IntegrationReturn } from "./IntegrationReturn";
 import { processAccount } from "./accounts/processAccount";
-import { processFiles } from "./files/processFiles";
-
-const BASE_PATH = "/app/data";
+import { applyResourceOrContainerUpdate } from "./files/applyResourceOrContainerUpdate";
 
 export async function handleIntegrationReturn(
   integrationReturn: IntegrationReturn,
 ): Promise<void> {
+  const { rootFilePath } = getGlobals();
   console.log("Integration Return", integrationReturn);
   // Process Accounts
   await Promise.all(
@@ -16,7 +16,8 @@ export async function handleIntegrationReturn(
   );
   // Process files
   await Promise.all(
-    integrationReturn?.files?.map((item) => processFiles(item, BASE_PATH)) ??
-      [],
+    integrationReturn?.files?.map((item) =>
+      applyResourceOrContainerUpdate(item, rootFilePath),
+    ) ?? [],
   );
 }

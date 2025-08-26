@@ -4,9 +4,10 @@ import fs from "fs/promises";
 
 export async function getIntegrationConfig(
   id: string,
+  integrationCodePath: string,
 ): Promise<IntegrationConfig> {
   const integrationJsonPath = path.join(
-    "/app/integrations",
+    integrationCodePath,
     id,
     "integration.json",
   );

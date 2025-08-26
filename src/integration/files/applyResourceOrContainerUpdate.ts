@@ -7,7 +7,12 @@ import fs from "fs/promises";
 import path from "path";
 import { exists } from "../util/exits";
 
-export async function processFiles(
+/**
+ * Given the update a resource or container update, apply it to the file system.
+ * @param item - The file or container update information.
+ * @param currentPath - The current path to the file or container.
+ */
+export async function applyResourceOrContainerUpdate(
   item: ResourceUpdateInformation | ContainerUpdateInformation,
   currentPath: string,
 ): Promise<void> {
@@ -28,7 +33,7 @@ export async function processFiles(
     // Recursively handle contents
     if (item.contains) {
       for (const containedItem of item.contains) {
-        await processFiles(containedItem, fullPath);
+        await applyResourceOrContainerUpdate(containedItem, fullPath);
       }
     }
   } else if (item.type === "resource") {

@@ -1,6 +1,7 @@
 {
   "@context": [
     "https://linkedsoftwaredependencies.org/bundles/npm/@solid/community-server/^8.0.0/components/context.jsonld",
+    "https://linkedsoftwaredependencies.org/bundles/npm/asynchronous-handlers/^1.0.0/components/context.jsonld",
     "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod/^1.0.0/components/context.jsonld"
   ],
   "@graph": [
@@ -45,8 +46,11 @@
       "comment": "Handles Integration Route",
       "@id": "urn:solid-server:default:IntegrationHandler",
       "@type": "IntegrationHandler",
-      "IntegrationHandler:_baseUrl": {
+      "baseUrl": {
         "@id": "urn:solid-server:default:variable:baseUrl"
+      },
+      "rootFilePath": {
+        "@id": "urn:solid-server:default:variable:rootFilePath"
       }
     }
   ]

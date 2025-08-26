@@ -1,7 +1,7 @@
 import { HttpError } from "../../api/HttpError";
 import { runIntegration } from "../../integration/runIntegration";
 import { Trigger } from "../Trigger";
-import { request, Request, Response } from "express";
+import { Request, Response } from "express";
 import { extractData } from "./extractData";
 
 export interface WebhookTriggerConfig {

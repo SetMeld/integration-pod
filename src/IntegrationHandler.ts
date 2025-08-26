@@ -12,10 +12,10 @@ export interface IntegrationHandlerArgs {
 export class IntegrationHandler extends HttpHandler {
   private app: Express;
 
-  constructor(baseUrl: string) {
+  constructor(baseUrl: string, rootFilePath: string) {
     super();
 
-    this.app = createApp(baseUrl);
+    this.app = createApp(baseUrl, rootFilePath);
   }
 
   async handle(input: HttpHandlerInput): Promise<void> {

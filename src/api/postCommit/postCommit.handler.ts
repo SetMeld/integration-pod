@@ -4,16 +4,18 @@ import { promisify } from "util";
 import fs from "fs/promises";
 import path from "path";
 import { updateTrigger } from "../../triggers/updateTrigger";
-
+import { getGlobals } from "../../globals";
 const execAsync = promisify(exec);
 
 export const postCommitHandler: RequestHandler = async (req, res) => {
   try {
     const { repo, ref, oldrev, newrev } = req.body;
 
+    const { integrationCodePath } = getGlobals();
+
     // Extract repo name (e.g., "demo" from "/srv/git/demo.git")
     const repoName = path.basename(repo, ".git");
-    const clonePath = `/app/integrations/${repoName}`;
+    const clonePath = path.join(integrationCodePath, repoName);
 
     console.log(`[HOOK] Received push to ${ref} for ${repoName}`);
     console.log(`[HOOK] Old: ${oldrev}`);
@@ -34,8 +36,7 @@ export const postCommitHandler: RequestHandler = async (req, res) => {
     await execAsync(installCmd);
 
     // Load integration.json
-
-    updateTrigger(repoName);
+    await updateTrigger(repoName, integrationCodePath);
 
     res.json({
       success: true,

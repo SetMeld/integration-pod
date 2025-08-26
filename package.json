@@ -17,7 +17,7 @@
     "build:server:ts": "tsc",
     "build:ui": "cd ui && npm install && npm run build:server",
     "dev:ui": "cd ui && npm run dev:server-hosted",
-    "dev:server": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -l debug",
+    "dev:server": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data",
     "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -b ${BASE_URL:-http://localhost:3000}"
   },
   "repository": {
@@ -37,7 +37,7 @@
     "@types/multer": "^1.4.12",
     "@typescript-eslint/eslint-plugin": "^8.30.0",
     "@typescript-eslint/parser": "^8.30.0",
-    "componentsjs-generator": "^3.1.2",
+    "componentsjs-generator": "^4.3.0",
     "concurrently": "^9.1.2",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.2",
@@ -52,7 +52,7 @@
     "@solid/access-token-verifier": "^2.1.0",
     "@solid/community-server": "^8.0.0-alpha.0",
     "body-parser": "^2.2.0",
-    "componentsjs": "^5.5.1",
+    "componentsjs": "^6.3.0",
     "express": "^5.1.0",
     "express-remove-route": "^1.0.0",
     "multer": "^1.4.5-lts.2",
