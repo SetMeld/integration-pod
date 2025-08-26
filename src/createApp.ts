@@ -1,9 +1,9 @@
 import express, { Express } from "express";
 import { createApiRouter } from "./api/apiRouter";
 import path from "path";
-import { loadAllTriggers } from "./triggers/loadAllTriggers";
+import { loadAllTriggers } from "./integration/triggers/loadAllTriggers";
 import { setGlobals } from "./globals";
-import { exists } from "./integration/util/exits";
+import { fsExists } from "./util/fsExits";
 import fs from "fs/promises";
 
 export function createApp(base: string, rootFilePath: string): Express {
@@ -14,11 +14,16 @@ export function createApp(base: string, rootFilePath: string): Express {
     internalDataFilePath,
     "integration-code",
   );
+  const integrationMetaPath = path.join(
+    internalDataFilePath,
+    "integration-meta",
+  );
 
   setGlobals({
     rootFilePath,
     internalDataFilePath,
     integrationCodePath,
+    integrationMetaPath,
   });
 
   ensureIntegrationFolder(rootFilePath);
@@ -48,12 +53,12 @@ export function ensureIntegrationFolder(rootFilePath: string) {
   (async () => {
     try {
       // Check if .integration folder exists
-      if (!(await exists(integrationFolderPath))) {
+      if (!(await fsExists(integrationFolderPath))) {
         await fs.mkdir(integrationFolderPath, { recursive: true });
       }
 
       // Check if .acl file exists, if not create it
-      if (!(await exists(aclFilePath))) {
+      if (!(await fsExists(aclFilePath))) {
         const aclContent = `# Root ACL resource for the agent account
 @prefix acl: <http://www.w3.org/ns/auth/acl#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.

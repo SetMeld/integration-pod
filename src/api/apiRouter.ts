@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import { HttpError } from "./HttpError";
 import fs from "fs/promises";
 import { postCommitHandler } from "./postCommit/postCommit.handler";
-import { triggers } from "../triggers/triggers";
+import { triggers } from "../integration/triggers/triggers";
 
 export function createApiRouter(base: string) {
   const apiRouter = express.Router();

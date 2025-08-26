@@ -1,11 +1,11 @@
-import { HttpError } from "../../api/HttpError";
+import { HttpError } from "../../../api/HttpError";
 import {
   ContainerUpdateInformation,
   ResourceUpdateInformation,
-} from "../IntegrationReturn";
+} from "../IntegrationResponse";
 import fs from "fs/promises";
 import path from "path";
-import { exists } from "../util/exits";
+import { fsExists } from "../../../util/fsExits";
 
 /**
  * Given the update a resource or container update, apply it to the file system.
@@ -19,7 +19,7 @@ export async function applyResourceOrContainerUpdate(
   const fullPath = path.join(currentPath, item.path);
 
   // Handle overwrite
-  if (item.overwrite && (await exists(fullPath))) {
+  if (item.overwrite && (await fsExists(fullPath))) {
     if (item.type === "container") {
       await fs.rm(fullPath, { recursive: true, force: true });
     } else if (item.type === "resource") {

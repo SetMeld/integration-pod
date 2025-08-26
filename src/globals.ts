@@ -2,12 +2,14 @@ export interface IntegrationPodGlobals {
   rootFilePath: string;
   internalDataFilePath: string;
   integrationCodePath: string;
+  integrationMetaPath: string;
 }
 
 const globals: IntegrationPodGlobals = {
   rootFilePath: "",
   internalDataFilePath: "",
   integrationCodePath: "",
+  integrationMetaPath: "",
 };
 
 export function getGlobals(): IntegrationPodGlobals {

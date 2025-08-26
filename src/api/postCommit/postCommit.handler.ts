@@ -3,7 +3,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import fs from "fs/promises";
 import path from "path";
-import { updateTrigger } from "../../triggers/updateTrigger";
+import { updateTrigger } from "../../integration/triggers/updateTrigger";
 import { getGlobals } from "../../globals";
 const execAsync = promisify(exec);
 

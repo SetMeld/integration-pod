@@ -1,4 +1,4 @@
-import { getIntegrationConfig } from "../integration/getIntegrationConfig";
+import { getIntegrationConfig } from "../getIntegrationConfig";
 import { triggers } from "./triggers";
 import { WebhookTriggerConfig } from "./webhook/WebhookTrigger";
 

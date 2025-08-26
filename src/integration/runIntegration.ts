@@ -1,7 +1,7 @@
 import path from "path";
 import { promises as fs } from "fs";
-import { IntegrationReturn } from "./IntegrationReturn";
-import { handleIntegrationReturn } from "./handleIntegrationReturn";
+import { IntegrationResponse } from "./handleIntegrationResponse/IntegrationResponse";
+import { handleIntegrationResponse } from "./handleIntegrationResponse/handleIntegrationResponse";
 import { getGlobals } from "../globals";
 
 export async function runIntegration(id: string, data: unknown): Promise<void> {
@@ -29,6 +29,6 @@ export async function runIntegration(id: string, data: unknown): Promise<void> {
   }
 
   // Step 5: Run the function with provided data
-  const integrationReturn = (await mod(data)) as IntegrationReturn;
-  await handleIntegrationReturn(integrationReturn);
+  const IntegrationResponse = (await mod(data)) as IntegrationResponse;
+  await handleIntegrationResponse(IntegrationResponse);
 }

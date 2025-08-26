@@ -1,6 +1,6 @@
 import { HttpError } from "@solid/community-server";
-import { AccountChanges } from "../IntegrationReturn";
-import { exists } from "../util/exits";
+import { AccountChanges } from "../IntegrationResponse";
+import { fsExists } from "../../../util/fsExits";
 import path from "path";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -14,7 +14,7 @@ export async function processAccount(
   const { podName, overwrite = false, externalWebId } = accountChanges;
 
   // Step 0: Check if the Pod exists, if it does, don't do anything.
-  if (await exists(path.join(BASE_PATH, podName))) {
+  if (await fsExists(path.join(BASE_PATH, podName))) {
     return;
   }
 

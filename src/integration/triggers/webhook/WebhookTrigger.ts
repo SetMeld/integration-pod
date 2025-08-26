@@ -1,5 +1,5 @@
-import { HttpError } from "../../api/HttpError";
-import { runIntegration } from "../../integration/runIntegration";
+import { HttpError } from "../../../api/HttpError";
+import { runIntegration } from "../../../integration/runIntegration";
 import { Trigger } from "../Trigger";
 import { Request, Response } from "express";
 import { extractData } from "./extractData";

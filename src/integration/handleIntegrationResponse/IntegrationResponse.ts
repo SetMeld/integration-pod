@@ -26,7 +26,7 @@ export interface AccountChanges {
   externalWebId?: string;
 }
 
-export interface IntegrationReturn {
+export interface IntegrationResponse {
   files?: (ResourceUpdateInformation | ContainerUpdateInformation)[];
   accounts?: AccountChanges[];
 }

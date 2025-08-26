@@ -2,7 +2,7 @@ import { Request, Express, Response } from "express";
 import { WebhookTriggerConfig } from "./WebhookTrigger";
 import multer from "multer";
 import bodyParser from "body-parser";
-import { HttpError } from "../../api/HttpError";
+import { HttpError } from "../../../api/HttpError";
 
 const upload = multer().any();
 const jsonParser = bodyParser.json();
