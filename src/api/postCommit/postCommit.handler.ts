@@ -1,29 +1,29 @@
 import { RequestHandler } from "express";
 import { exec } from "child_process";
 import { promisify } from "util";
-import fs from "fs/promises";
 import path from "path";
 import { updateTrigger } from "../../integration/triggers/updateTrigger";
-import { getGlobals } from "../../globals";
+import {
+  getIntegrationPath,
+  removeIntegration,
+} from "../../integrationStorage/integrationCode.storage";
 const execAsync = promisify(exec);
 
 export const postCommitHandler: RequestHandler = async (req, res) => {
   try {
     const { repo, ref, oldrev, newrev } = req.body;
 
-    const { integrationCodePath } = getGlobals();
-
     // Extract repo name (e.g., "demo" from "/srv/git/demo.git")
-    const repoName = path.basename(repo, ".git");
-    const clonePath = path.join(integrationCodePath, repoName);
+    const integrationId = path.basename(repo, ".git");
+    const clonePath = getIntegrationPath(integrationId);
 
-    console.log(`[HOOK] Received push to ${ref} for ${repoName}`);
+    console.log(`[HOOK] Received push to ${ref} for ${integrationId}`);
     console.log(`[HOOK] Old: ${oldrev}`);
     console.log(`[HOOK] New: ${newrev}`);
     console.log(`[HOOK] Clone path: ${clonePath}`);
 
     // If the repo folder already exists, delete it
-    await fs.rm(clonePath, { recursive: true, force: true });
+    await removeIntegration(integrationId);
 
     // Clone the repo
     const cloneCmd = `git clone ${repo} ${clonePath}`;
@@ -36,11 +36,11 @@ export const postCommitHandler: RequestHandler = async (req, res) => {
     await execAsync(installCmd);
 
     // Load integration.json
-    await updateTrigger(repoName, integrationCodePath);
+    await updateTrigger(integrationId);
 
     res.json({
       success: true,
-      repo: repoName,
+      repo: integrationId,
     });
   } catch (err) {
     console.error("[HOOK] Error processing push:", err);

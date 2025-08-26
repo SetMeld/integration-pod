@@ -1,12 +1,9 @@
-import { getIntegrationConfig } from "../getIntegrationConfig";
+import { readIntegrationConfig } from "../../integrationStorage/integrationCode.storage";
 import { triggers } from "./triggers";
 import { WebhookTriggerConfig } from "./webhook/WebhookTrigger";
 
-export async function updateTrigger(
-  id: string,
-  integrationCodePath: string,
-): Promise<void> {
-  const config = await getIntegrationConfig(id, integrationCodePath);
+export async function updateTrigger(id: string): Promise<void> {
+  const config = await readIntegrationConfig(id);
   // TODO: remove the trigger of the previous service if it was different
   const trigger = triggers[config.trigger.type as "webhook"];
   if (!trigger) {
