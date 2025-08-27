@@ -5,6 +5,8 @@ import { HttpError } from "./HttpError";
 import fs from "fs/promises";
 import { postCommitHandler } from "./postCommit/postCommit.handler";
 import { triggers } from "../integration/triggers/triggers";
+import { getGlobals } from "../globals";
+import path from "path";
 
 export function createApiRouter(base: string) {
   const apiRouter = express.Router();
@@ -119,8 +121,6 @@ export function createApiRouter(base: string) {
    * GIT SSH KEY
    * ===========================================================================
    */
-  const AUTHORIZED_KEYS_PATH = "/authorized_keys";
-
   apiRouter.post("/git-ssh-key", bodyParser.json(), async (req, res) => {
     const { sshKey } = req.body;
 
@@ -131,7 +131,13 @@ export function createApiRouter(base: string) {
 
     const entry = `${sshKey.trim()}\n`;
 
-    await fs.writeFile(AUTHORIZED_KEYS_PATH, entry, { mode: 0o600 });
+    const { internalDataFilePath } = getGlobals();
+    const authorizedKeysPath = path.join(
+      internalDataFilePath,
+      "authorized_keys",
+    );
+
+    await fs.writeFile(authorizedKeysPath, entry, { mode: 0o600 });
     res.json({ success: true });
   });
 

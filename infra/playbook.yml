@@ -3,7 +3,7 @@
   become: yes
 
   vars:
-    docker_image: "jaxoncreed/integration-pod:latest"
+    docker_image: "jaxoncreed/setmeld-pod:latest"
 
   vars_files:
     - secrets.yml

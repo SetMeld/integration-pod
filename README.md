@@ -1,84 +1,196 @@
-# Integration Pod
+# SetMeld Pod
 
-This is a standard Solid pod with extra routes to handle deploying an integration. Going to the `./integration/*` route will give you a dashboard 
+SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
 
-## Run everything
+## Features
 
-One time before running docker:
+- **Community Solid Server (CSS)** with full Solid protocol support
+- **Git over SSH** with pretty repository URLs (`ssh://git@host:port/repo.git`)
+- **Development environment** for macOS/Linux
+- **Production deployment** via Debian package
+- **Systemd integration** with automatic service management
+
+## Prerequisites
+
+### Development
+- Node.js ≥ 20
+- Git
+- OpenSSH (dev: `/usr/sbin/sshd` available on macOS & Linux)
+
+### Production
+- nfpm (for packaging): `go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest`
+
+## Development
+
+### Quick Start
+
 ```bash
-sudo npm run setup
+# Setup development environment (one-time)
+npm run dev:setup
+
+# Start both CSS and Git SSHD
+npm run dev
 ```
 
-Then run docker
+### Development Usage
+
+After running `npm run dev`, you can:
+
+1. **Add your SSH key** (one-time):
+   ```bash
+   cat ~/.ssh/id_ed25519.pub >> dev/authorized_keys
+   ```
+
+2. **Create a test repository**:
+   ```bash
+   mkdir -p dev/git-root/my_repo_name.git
+   git -C dev/git-root/my_repo_name.git init --bare
+   ```
+
+3. **Push to the repository**:
+   ```bash
+   git remote add origin ssh://git@localhost:2229/my_repo_name.git
+   git push -u origin main
+   ```
+
+### Development Scripts
+
+- `npm run dev:setup` - Initialize development environment
+- `npm run dev:sshd` - Start Git SSHD only
+- `npm run dev:css` - Start CSS only
+- `npm run dev` - Start both services concurrently
+
+## Production Deployment
+
+### Building the Package
+
 ```bash
-npm run docker:prod
+# Build the Debian package
+npm run bundle
+# => setmeld-pod_0.1.0_amd64.deb
 ```
 
-Alernatively you can run `npm run docker:dev` to watch for changes. Note, on some machines, the UI may have trouble building so you can run `npm run watch:ui` in a separate window to also enable wathing the UI.
+### Installation
 
-## Building and publishing
+1. **Publish your `.deb`** to an APT repository (Cloudsmith/PackageCloud or self-hosted)
 
-Create Secrets
-```bash
-cd infra
-ansible-vault create secrets.yml
-ansible-vault edit secrets.yml
+2. **Install on target host**:
+   ```bash
+   sudo apt update
+   sudo apt install setmeld-pod
+   ```
+
+3. **Configure**:
+   ```bash
+   # Add admin keys
+   sudo nano /etc/setmeld-pod/authorized_keys
+   
+   # Optional: Edit configuration
+   sudo nano /etc/setmeld-pod/config.env
+   
+   # Restart services
+   sudo systemctl daemon-reload
+   sudo systemctl restart setmeld-pod.target
+   ```
+
+4. **Create repositories**:
+   ```bash
+   # Create a bare repository
+   sudo -u git mkdir -p /var/lib/setmeld/data/.internal/integration-repo/my_repo_name.git
+   sudo -u git git -C /var/lib/setmeld/data/.internal/integration-repo/my_repo_name.git init --bare
+   
+   # Push from workstation
+   git remote add origin ssh://git@HOST:2222/my_repo_name.git
+   git push -u origin main
+   ```
+
+## Configuration
+
+### CSS Parameters
+
+All Community Solid Server parameters are supported:
+
+```
+--port|-p (default 3000)
+--baseUrl|-b (default http://localhost:$PORT/)
+--socket
+--loggingLevel|-l (default info)
+--config|-c (default @css:config/default.json)
+--rootFilePath|-f (default ./)
+--sparqlEndpoint|-s
+--showStackTrace|-t (default false)
+--podConfigJson (default ./pod-config.json)
+--seedConfig
+--mainModulePath|-m
+--workers|-w (default 1)
 ```
 
-Add secrets like the following
-```bash
-dockerhub_username: exampleuser
-dockerhub_password: examplepass
-domain: example.com
-email: example@example.com
+### Orchestrator Parameters
+
+- `--git-port` (default 2222) - Port for dedicated Git SSHD
+
+### Configuration Precedence
+
+1. Command line arguments
+2. `/etc/setmeld-pod/config.env` (production)
+3. Default values
+
+## Architecture
+
+### Pretty URLs
+
+The system supports pretty repository URLs:
+
+```
+ssh://git@HOST:PORT/my_repo_name.git
 ```
 
-Add hosts (`./infra/host`)
-```bash
-[web]
-your-server-ip ansible_user=ubuntu
+Internally maps to:
+
+```
+${ROOT_FILE_PATH}/.internal/integration-repo/my_repo_name.git
 ```
 
-Build and publish
-```bash
-docker buildx create --use
-docker buildx build --platform linux/amd64 -t jaxoncreed/integration-pod:latest --push .
-```
+Using `SetEnv GIT_PROJECT_ROOT` + `git-shell` for clean URL mapping.
 
-Run Ansible
-```bash
-ansible-playbook -i hosts playbook.yml --ask-vault-pass
-```
+### Services
 
-## Hacks to Set Up the Server
+- **CSS Service** (`setmeld-pod-node.service`) - Runs Community Solid Server
+- **Git SSHD Service** (`setmeld-pod-git-sshd.service`) - Dedicated SSH daemon for Git
+- **Target Service** (`setmeld-pod.target`) - Groups both services together
 
-The UI for this server isn't completely automatic yet. Therefore, there are some manual setup things you'll need to do:
+### Security
 
-### 1. Create an Admin Account:
+- **Separate SSH daemon** - Isolated from system sshd
+- **Git-shell only** - Restricted to Git operations
+- **Public key authentication** - No password authentication
+- **No TTY/forwarding** - Disabled for security
 
- - On the main page (for example http://localhost:3000/), click the "Sign up for an account."
- - Create an account with your username and password.
- - Click the "Create Pod" link.
- - Ensure that the name of this Pod is "admin"
+## Development vs Production
 
+| Aspect | Development | Production |
+|--------|-------------|------------|
+| **CSS Port** | 3000 | Configurable |
+| **Git Port** | 2229 | 2222 (default) |
+| **Data Directory** | `./data` | `/var/lib/setmeld/data` |
+| **SSH Keys** | `./dev/sshd/hostkeys` | `/etc/setmeld-pod/sshd/hostkeys` |
+| **Authorized Keys** | `./dev/authorized_keys` | `/etc/setmeld-pod/authorized_keys` |
+| **Service Management** | Manual/Concurrently | Systemd |
 
-## API
+## Troubleshooting
 
- - GET `./integration/api/integration`: Gets a list of all integrations
- - POST `./integration/api/integration`: Creates a new integration
- - GET `./integration/api/integration/:id`: Returns integration information
- - PUT `./integration/api/integration/:id`: Updates the integration
- - GET `./integration/api/integration/:id/log/deploy`: Get Deploy Log
- - GET `./integration/api/integration/:id/log/trigger`: Get Deploy Log
- - GET `./integration/api/integration/:id/log/integration`: Get Deploy Log
+### Development Issues
 
+1. **SSH connection refused**: Ensure `npm run dev:setup` was run
+2. **Permission denied**: Check `dev/authorized_keys` contains your public key
+3. **Port already in use**: Kill existing processes or change ports in scripts
 
-Integration JSON:
-```typescript
-interface Integration {
-  "id": string;
-  status: string
-  statusMessage?: string;
-  "gitAddress": string;
-}
-```
+### Production Issues
+
+1. **Service won't start**: Check logs with `journalctl -u setmeld-pod-node.service`
+2. **Git access denied**: Verify `/etc/setmeld-pod/authorized_keys` permissions and content
+3. **Port conflicts**: Adjust `GIT_PORT` in `/etc/setmeld-pod/config.env`
+
+## License
+
+MIT

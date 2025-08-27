@@ -1,5 +1,5 @@
 {
-  "name": "integration-pod-linked-data-browser",
+  "name": "setmeld-pod-linked-data-browser",
   "main": "index.js",
   "version": "0.0.0",
   "scripts": {

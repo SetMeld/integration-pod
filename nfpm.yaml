@@ -1,0 +1,59 @@
+name: setmeld-pod
+arch: amd64
+platform: linux
+version: "0.1.0"
+section: default
+priority: extra
+maintainer: "SetMeld Team <team@setmeld.com>"
+description: |
+  SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
+vendor: SetMeld
+homepage: https://setmeld.com
+license: MIT
+
+formats: [deb]
+
+dependencies:
+  - nodejs (>= 20)
+  - openssh-server
+  - git
+
+contents:
+  - src: ./node_modules
+    dst: /usr/lib/setmeld-pod/node_modules
+    type: tree
+  - src: ./config
+    dst: /usr/lib/setmeld-pod/config
+    type: tree
+
+  - src: ./scripts/setmeld-pod
+    dst: /usr/bin/setmeld-pod
+    file_info: { mode: 0755 }
+
+  - src: ./scripts/config.env.example
+    dst: /usr/share/setmeld-pod/config.env.example
+
+  - src: ./scripts/setmeld-pod-node.service
+    dst: /lib/systemd/system/setmeld-pod-node.service
+  - src: ./scripts/setmeld-pod-git-sshd.service
+    dst: /lib/systemd/system/setmeld-pod-git-sshd.service
+  - src: ./scripts/setmeld-pod.target
+    dst: /lib/systemd/system/setmeld-pod.target
+
+  - dst: /etc/setmeld-pod
+    type: dir
+    file_info: { mode: 0755 }
+
+  - dst: /var/lib/setmeld/data
+    type: dir
+    file_info: { mode: 0755, owner: setmeld, group: setmeld }
+
+scripts:
+  postinstall: ./scripts/postinstall.sh
+  postremove: ./scripts/postremove.sh
+
+overrides:
+  deb:
+    config_files:
+      - /etc/setmeld-pod/config.env
+      - /etc/setmeld-pod/authorized_keys
