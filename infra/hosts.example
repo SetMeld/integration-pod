@@ -1,2 +1,0 @@
-[web]
-your-server-ip ansible_user=ubuntu
