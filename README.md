@@ -6,9 +6,6 @@ SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
 
 - **Community Solid Server (CSS)** with full Solid protocol support
 - **Git over SSH** with pretty repository URLs (`ssh://git@host:port/repo.git`)
-- **Development environment** for macOS/Linux
-- **Production deployment** via Debian package
-- **Systemd integration** with automatic service management
 
 ## Prerequisites
 
@@ -25,10 +22,7 @@ SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
 ### Quick Start
 
 ```bash
-# Setup development environment (one-time)
-npm run dev:setup
-
-# Start both CSS and Git SSHD
+npm i
 npm run dev
 ```
 
@@ -36,16 +30,14 @@ npm run dev
 
 After running `npm run dev`, you can:
 
-1. **Add your SSH key** (one-time):
-   ```bash
-   cat ~/.ssh/id_ed25519.pub >> dev/authorized_keys
-   ```
-
-2. **Create a test repository**:
-   ```bash
-   mkdir -p dev/git-root/my_repo_name.git
-   git -C dev/git-root/my_repo_name.git init --bare
-   ```
+ - Navigate to http://localhost:3000/.integration/
+ - Click "Sign Up" and create an account with the "Pod Name" "admin"
+ - Click "Set SSH Key" and paste your ssh key for your personal computer into the modal. (this will allow you to commit to the git repo)
+ - For dev, all data is stored in the `./data` folder. Look in the `./data/.internal` for integration data. Specifically:
+    - `./data/.internal/integration-git`: The root file where git repos are committed.
+    - `./data/.internal/integration-code`: The folder integration code is cloned to and run from.
+    - `./data/.internal/integration-meta`: Metadata about each integration
+    - `./data/.internal/authorized_keys`: Lists the ssh key that is allowed to commit to the integration repo.
 
 3. **Push to the repository**:
    ```bash

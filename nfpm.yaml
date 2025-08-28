@@ -1,37 +1,33 @@
-name: setmeld-pod
-arch: amd64
-platform: linux
+name: "setmeld-pod"
+arch: "arm64"
+platform: "linux"
 version: "0.1.0"
-section: default
-priority: extra
-maintainer: "SetMeld Team <team@setmeld.com>"
-description: |
-  SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
-vendor: SetMeld
-homepage: https://setmeld.com
-license: MIT
-
-formats: [deb]
-
-dependencies:
-  - nodejs (>= 20)
+section: "default"
+priority: "extra"
+depends:
+  - nodejs (>= 18)
   - openssh-server
   - git
+maintainer: "SetMeld Team <jackson@setmeld.com>"
+description: |
+  SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
+vendor: "SetMeld"
+homepage: "https://setmeld.com"
+license: "MIT"
 
 contents:
-  - src: ./node_modules
-    dst: /usr/lib/setmeld-pod/node_modules
-    type: tree
+  - src: ./dist/
+    dst: /usr/lib/setmeld-pod/dist
+  - src: ./ui/dist-server/
+    dst: /usr/lib/setmeld-pod/ui/dist-server/
   - src: ./config
-    dst: /usr/lib/setmeld-pod/config
-    type: tree
+    dst: /usr/lib/setmeld-pod/config/
+  - src: ./node_modules/
+    dst: /usr/lib/setmeld-pod/node_modules
 
   - src: ./scripts/setmeld-pod
     dst: /usr/bin/setmeld-pod
     file_info: { mode: 0755 }
-
-  - src: ./scripts/config.env.example
-    dst: /usr/share/setmeld-pod/config.env.example
 
   - src: ./scripts/setmeld-pod-node.service
     dst: /lib/systemd/system/setmeld-pod-node.service
@@ -48,12 +44,12 @@ contents:
     type: dir
     file_info: { mode: 0755, owner: setmeld, group: setmeld }
 
-scripts:
-  postinstall: ./scripts/postinstall.sh
-  postremove: ./scripts/postremove.sh
+  - src: ./scripts/config.env.example
+    dst: /etc/setmeld-pod/config.env
+    type: config
 
 overrides:
   deb:
-    config_files:
-      - /etc/setmeld-pod/config.env
-      - /etc/setmeld-pod/authorized_keys
+    scripts:
+      postinstall: ./scripts/postinstall.sh
+      postremove: ./scripts/postremove.sh
