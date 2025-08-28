@@ -1,11 +1,12 @@
 name: "setmeld-pod"
-arch: "arm64"
+arch: "all"
 platform: "linux"
 version: "0.1.0"
 section: "default"
 priority: "extra"
 depends:
   - nodejs (>= 18)
+  - curl
   - openssh-server
   - git
 maintainer: "SetMeld Team <jackson@setmeld.com>"
@@ -25,15 +26,15 @@ contents:
   - src: ./node_modules/
     dst: /usr/lib/setmeld-pod/node_modules
 
-  - src: ./scripts/setmeld-pod
+  - src: ./scripts/bundleScripts/setmeld-pod
     dst: /usr/bin/setmeld-pod
     file_info: { mode: 0755 }
 
-  - src: ./scripts/setmeld-pod-node.service
+  - src: ./scripts/bundleScripts/setmeld-pod-node.service
     dst: /lib/systemd/system/setmeld-pod-node.service
-  - src: ./scripts/setmeld-pod-git-sshd.service
+  - src: ./scripts/bundleScripts/setmeld-pod-git-sshd.service
     dst: /lib/systemd/system/setmeld-pod-git-sshd.service
-  - src: ./scripts/setmeld-pod.target
+  - src: ./scripts/bundleScripts/setmeld-pod.target
     dst: /lib/systemd/system/setmeld-pod.target
 
   - dst: /etc/setmeld-pod
@@ -44,12 +45,12 @@ contents:
     type: dir
     file_info: { mode: 0755, owner: setmeld, group: setmeld }
 
-  - src: ./scripts/config.env.example
+  - src: ./scripts/bundleScripts/config.env.example
     dst: /etc/setmeld-pod/config.env
     type: config
 
 overrides:
   deb:
     scripts:
-      postinstall: ./scripts/postinstall.sh
-      postremove: ./scripts/postremove.sh
+      postinstall: ./scripts/bundleScripts/postinstall.sh
+      postremove: ./scripts/bundleScripts/postremove.sh

@@ -4,7 +4,7 @@ set -euo pipefail
 echo "🧪 Testing SetMeld Pod .deb package in Docker"
 
 # Find the .deb file
-DEB_FILE=$(find . -name "setmeld-pod_*.deb" | head -1)
+DEB_FILE=$(find . -name "setmeld-pod_*arm64.deb" | head -1)
 
 if [[ ! -f "$DEB_FILE" ]]; then
     echo "❌ No .deb file found. Run 'npm run bundle' first."

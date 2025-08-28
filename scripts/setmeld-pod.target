@@ -1,3 +1,0 @@
-[Unit]
-Description=SetMeld Pod (CSS + Git)
-Requires=setmeld-pod-node.service setmeld-pod-git-sshd.service

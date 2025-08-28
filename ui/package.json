@@ -2,6 +2,9 @@
   "name": "setmeld-pod-linked-data-browser",
   "main": "index.js",
   "version": "0.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev:ios": "expo start -c --ios",
     "dev:web": "concurrently \"npm run solid-server\" \"expo start -c --web\"",

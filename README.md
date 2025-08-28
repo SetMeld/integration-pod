@@ -10,7 +10,7 @@ SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
 ## Prerequisites
 
 ### Development
-- Node.js ≥ 20
+- Node.js ≥ 18
 - Git
 - OpenSSH (dev: `/usr/sbin/sshd` available on macOS & Linux)
 
@@ -72,7 +72,18 @@ npm run bundle
    sudo apt install setmeld-pod
    ```
 
-3. **Configure**:
+3. **Install Node.js 18+ (if not already installed)**:
+   ```bash
+   # Use the provided script (recommended)
+   sudo setmeld-pod-install-nodejs
+   
+   # Or install manually
+   curl -fsSL https://deb.nodesource.com/setup_18.x | sudo bash -
+   sudo apt-get update
+   sudo apt-get install -y nodejs
+   ```
+
+4. **Configure**:
    ```bash
    # Add admin keys
    sudo nano /etc/setmeld-pod/authorized_keys
@@ -85,7 +96,7 @@ npm run bundle
    sudo systemctl restart setmeld-pod.target
    ```
 
-4. **Create repositories**:
+5. **Create repositories**:
    ```bash
    # Create a bare repository
    sudo -u git mkdir -p /var/lib/setmeld/data/.internal/integration-repo/my_repo_name.git

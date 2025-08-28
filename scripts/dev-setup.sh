@@ -28,5 +28,4 @@ ForceCommand git-shell -c "\$SSH_ORIGINAL_COMMAND"
 EOF
 
 echo "✔ Dev SSHD ready."
-echo "Append your key:  cat ~/.ssh/id_ed25519.pub >> ${DEV_DIR}/authorized_keys"
 echo "Dev repo root:    ${DEV_DIR}/git-root"

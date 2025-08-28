@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "SetMeld Pod: Community Solid Server + Git over SSH (git-shell)",
   "main": "./dist/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npm run dev:setup && concurrently -k -n server,git,ui \"npm:dev:server\" \"npm:dev:sshd\" \"npm:dev:ui\"",
@@ -15,7 +18,7 @@
     "build:server:ts": "tsc",
     "build:ui": "cd ui && npm install && npm run build:server",
     "build": "npm run build:server && npm run build:ui",
-    "bundle": "npm run build && nfpm package -f nfpm.yaml -p deb",
+    "bundle": "npm run build && bash ./scripts/build-packages.sh",
     "test:bundle": "bash ./scripts/test-deb.sh"
   },
   "repository": {
