@@ -1,3 +1,8 @@
+# Node.js bundling artifacts
+vendor
+bundle
+*.deb
+
 node_modules
 dist
 data

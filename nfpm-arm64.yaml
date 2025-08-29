@@ -1,0 +1,59 @@
+name: "setmeld-pod"
+arch: "arm64"
+platform: "linux"
+version: "0.1.0"
+section: "utils"
+priority: "optional"
+maintainer: "SetMeld Team <jackson@setmeld.com>"
+vendor: "SetMeld"
+homepage: "https://setmeld.com"
+license: "MIT"
+description: |
+  SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
+
+depends:
+  - openssh-server
+  - git
+
+contents:
+  - src: ./dist/
+    dst: /usr/lib/setmeld-pod/dist
+  - src: ./ui/dist-server/
+    dst: /usr/lib/setmeld-pod/ui/dist-server/
+  - src: ./config
+    dst: /usr/lib/setmeld-pod/config/
+  - src: ./node_modules/
+    dst: /usr/lib/setmeld-pod/node_modules
+
+  # bundled Node runtime (unpacked official tarball for linux-arm64)
+  - src: ./vendor/node-runtime-arm64/
+    dst: /usr/lib/setmeld-pod/runtime
+
+  - src: ./scripts/bundleScripts/setmeld-pod
+    dst: /usr/bin/setmeld-pod
+    file_info: { mode: 0755 }
+
+  - src: ./scripts/bundleScripts/setmeld-pod-node.service
+    dst: /lib/systemd/system/setmeld-pod-node.service
+  - src: ./scripts/bundleScripts/setmeld-pod-git-sshd.service
+    dst: /lib/systemd/system/setmeld-pod-git-sshd.service
+  - src: ./scripts/bundleScripts/setmeld-pod.target
+    dst: /lib/systemd/system/setmeld-pod.target
+
+  - dst: /etc/setmeld-pod
+    type: dir
+    file_info: { mode: 0755 }
+
+  - dst: /var/lib/setmeld/data
+    type: dir
+    file_info: { mode: 0755, owner: root, group: root }
+
+  - src: ./scripts/bundleScripts/config.env.example
+    dst: /etc/setmeld-pod/config.env
+    type: config
+
+overrides:
+  deb:
+    scripts:
+      postinstall: ./scripts/bundleScripts/postinstall.sh
+      postremove: ./scripts/bundleScripts/postremove.sh

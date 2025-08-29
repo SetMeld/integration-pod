@@ -3,8 +3,8 @@ set -euo pipefail
 
 echo "🧪 Testing SetMeld Pod .deb package in Docker"
 
-# Find the .deb file
-DEB_FILE=$(find . -name "setmeld-pod_*arm64.deb" | head -1)
+# Find the .deb file in bundle directory
+DEB_FILE=$(find ./bundle -name "setmeld-pod_*arm64.deb" | head -1)
 
 if [[ ! -f "$DEB_FILE" ]]; then
     echo "❌ No .deb file found. Run 'npm run bundle' first."
@@ -20,25 +20,21 @@ docker rmi setmeld-pod-test 2>/dev/null || true
 
 # Create a Dockerfile for testing
 cat > Dockerfile.test << 'EOF'
-FROM ubuntu:22.04
+FROM ubuntu:latest
 
-# Minimal runtime deps for your app (edit as needed)
-RUN apt-get update && apt-get install -y ca-certificates curl openssh-server \
-    && rm -rf /var/lib/apt/lists/*
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Copy .deb
-COPY setmeld-pod_*.deb /tmp/
+# Copy your architecture-specific .deb
+# (Use the right suffix for the build _arm64.deb)
+COPY bundle/setmeld-pod_*_arm64.deb /tmp/pkg.deb
 
-# Install with dependency resolution
-RUN apt-get update && apt-get install -y /tmp/setmeld-pod_*.deb \
-    && rm -rf /var/lib/apt/lists/*
+# Install with dependency resolution but without extra runtime packages
+RUN apt-get update \
+ && apt-get install -y /tmp/pkg.deb \
+ && rm -rf /var/lib/apt/lists/* /tmp/pkg.deb
 
-# Expose whatever your app needs
-EXPOSE 3000 2222
-
-# If your deb installs a binary like /usr/bin/setmeld-pod, run it in the foreground.
-# Replace this with the actual foreground command your service provides:
-CMD ["/usr/bin/setmeld-pod", "--no-daemon"]
+EXPOSE 3000
+CMD ["/usr/bin/setmeld-pod"]
 EOF
 
 # Build

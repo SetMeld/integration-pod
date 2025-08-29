@@ -1,92 +1,44 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-echo "Setting up SetMeld Pod..."
+log() { echo "[setmeld-postinst] $*"; }
 
-# Check if Node.js 18+ is installed
-if ! command -v node >/dev/null 2>&1 || [[ $(node --version | cut -d'v' -f2 | cut -d'.' -f1) -lt 18 ]]; then
-    echo "Node.js 18+ is required but not found or version is too old."
-    echo ""
-    echo "You can install Node.js 18+ using the provided script:"
-    echo "  sudo setmeld-pod-install-nodejs"
-    echo ""
-    echo "Or install manually using one of these methods:"
-    echo ""
-    echo "Method 1 - Using NodeSource repository (recommended):"
-    echo "  curl -fsSL https://deb.nodesource.com/setup_18.x | sudo bash -"
-    echo "  sudo apt-get update"
-    echo "  sudo apt-get install -y nodejs"
-    echo ""
-    echo "Method 2 - Using Node Version Manager (nvm):"
-    echo "  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash"
-    echo "  source ~/.bashrc"
-    echo "  nvm install 18"
-    echo "  nvm use 18"
-    echo ""
-    echo "After installing Node.js 18+, restart the setmeld-pod service:"
-    echo "  sudo systemctl restart setmeld-pod"
-    echo ""
-    echo "Note: The service will not start until Node.js 18+ is installed."
-fi
+log "Setting up SetMeld Pod (minimal)..."
 
-# CSS service account
+# 1) Create service users
 if ! id -u setmeld >/dev/null 2>&1; then
-    echo "Creating setmeld user..."
-    useradd --system --home /var/lib/setmeld --shell /usr/sbin/nologin setmeld
+  log "Creating 'setmeld' system user..."
+  useradd --system --home /var/lib/setmeld --shell /usr/sbin/nologin setmeld || true
 fi
 
-# Git account for pretty URLs 'git@host'
 if ! id -u git >/dev/null 2>&1; then
-    echo "Creating git user..."
-    useradd --system --home /var/lib/setmeld/data/.internal/integration-repo --shell /usr/bin/git-shell git
+  log "Creating 'git' system user..."
+  useradd --system --home /var/lib/setmeld --shell /usr/bin/git-shell git || true
 fi
 
-# Create data directories
-echo "Creating data directories..."
-install -d -o setmeld -g setmeld /var/lib/setmeld/data
-install -d -o setmeld -g setmeld /var/lib/setmeld/data/.internal
-install -d -o setmeld -g setmeld /var/lib/setmeld/data/.internal/integration-repo
+# 2) Create core dirs (owned by git for SSH access)
+log "Creating data directories..."
+install -d -m 0755 -o git -g git /var/lib/setmeld/data
 
-# Create configuration directories
-echo "Creating configuration directories..."
-install -d -o root -g root /etc/setmeld-pod
-install -d -o root -g root /etc/setmeld-pod/sshd
-install -d -o root -g root /etc/setmeld-pod/sshd/hostkeys
+# 3) Config dir (conffile is installed by the package; don't overwrite here)
+log "Ensuring config directory..."
+install -d -m 0755 -o root -g root /etc/setmeld-pod
+# DO NOT copy config.env here; nfpm installs it as a conffile:
+# - src: ./scripts/bundleScripts/config.env.example
+#   dst: /etc/setmeld-pod/config.env
+#   type: config
 
-# Copy default configuration if it doesn't exist
-if [[ ! -f /etc/setmeld-pod/config.env ]]; then
-    echo "Installing default configuration..."
-    cp /usr/share/setmeld-pod/config.env.example /etc/setmeld-pod/config.env
+# 4) Container-safe systemd handling (no-ops in containers)
+if command -v systemctl >/dev/null 2>&1 && [ -d /run/systemd/system ]; then
+  log "Systemd detected; enabling SetMeld Pod services..."
+  systemctl daemon-reload || true
+  systemctl enable setmeld-pod.target || true
+  # The target unit will automatically enable both setmeld-pod-node.service and setmeld-pod-git-sshd.service
+else
+  log "No systemd (container likely). Skipping service enable."
 fi
 
-# Create authorized_keys file with proper permissions
-echo "Setting up SSH access..."
-touch /etc/setmeld-pod/authorized_keys
-chmod 600 /etc/setmeld-pod/authorized_keys
-chown root:root /etc/setmeld-pod/authorized_keys
-
-# Generate SSH host keys if they don't exist
-if [[ ! -f /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key ]]; then
-    echo "Generating SSH host keys..."
-    ssh-keygen -t ed25519 -N "" -f /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key
-    chown -R root:root /etc/setmeld-pod/sshd/hostkeys
-    chmod 600 /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key
-    chmod 644 /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key.pub
-fi
-
-# Set proper ownership for repository directory
-echo "Setting up repository directory..."
-chown -R git:git /var/lib/setmeld/data/.internal/integration-repo
-
-# Reload systemd and enable services
-echo "Enabling services..."
-systemctl daemon-reload || true
-systemctl enable setmeld-pod || true
-
-echo "SetMeld Pod installation complete!"
-echo ""
-echo "Next steps:"
-echo "1. Add SSH keys to /etc/setmeld-pod/authorized_keys"
-echo "2. Edit configuration at /etc/setmeld-pod/config.env (optional)"
-echo "3. Start services: systemctl start setmeld-pod"
-echo "4. Create repositories: sudo -u git mkdir -p /var/lib/setmeld/data/.internal/integration-repo/your-repo.git && sudo -u git git -C /var/lib/setmeld/data/.internal/integration-repo/your-repo.git init --bare"
+log "SetMeld Pod installation complete."
+log "Next steps (typical container run):"
+log "  - Edit /etc/setmeld-pod/config.env if needed."
+log "  - Start with: /usr/bin/setmeld-pod"
