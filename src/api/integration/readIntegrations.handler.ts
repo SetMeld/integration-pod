@@ -5,6 +5,7 @@ import {
   listIntegrationMeta,
   readIntegrationMeta,
 } from "../../integrationStorage/integrationMeta.storage";
+import { getGlobals } from "../../globals";
 
 /**
  * Reads all integrations from storage
@@ -12,6 +13,7 @@ import {
  * @param res - Express response object
  */
 export const readIntegrationsHandler: RequestHandler = async (req, res) => {
+  const { logger } = getGlobals();
   try {
     // Get list of all integration IDs
     const integrationIds = await listIntegrationMeta();
@@ -24,20 +26,20 @@ export const readIntegrationsHandler: RequestHandler = async (req, res) => {
         const integrationMeta = await readIntegrationMeta(integrationId);
         integrations.push(integrationMeta);
       } catch (error) {
-        console.error(
-          `[${integrationId}] Failed to read integration meta:`,
+        logger.error(`Failed to read integration meta for ${integrationId}`, {
           error,
-        );
+          integrationId,
+        });
         // Continue with other integrations even if one fails
       }
     }
 
-    console.log(`Retrieved ${integrations.length} integrations`);
+    logger.info(`Retrieved ${integrations.length} integrations`);
 
     // Return the integrations array
     res.json(integrations);
   } catch (error) {
-    console.error("Failed to read integrations:", error);
+    logger.error("Failed to read integrations", { error });
 
     if (error instanceof HttpError) {
       throw error;

@@ -2,6 +2,7 @@ import { HttpError } from "@solid/community-server";
 import { AccountChanges } from "../IntegrationResponse";
 import { fsExists } from "../../../util/fsExits";
 import path from "path";
+import { getGlobals } from "../../../globals";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const SERVER_URL = "http://localhost:3000/.account/";
@@ -10,7 +11,8 @@ const BASE_PATH = "/app/data";
 export async function processAccount(
   accountChanges: AccountChanges,
 ): Promise<void> {
-  console.log("PROCESSING ACCOUNT!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  const { logger } = getGlobals();
+  logger.info("Processing account changes", { accountChanges });
   const { podName, overwrite = false, externalWebId } = accountChanges;
 
   // Step 0: Check if the Pod exists, if it does, don't do anything.
@@ -23,7 +25,7 @@ export async function processAccount(
     method: "GET",
   });
   const controlsData = (await controlsResponse.json()) as any;
-  console.log("CONTREOLS DATA!!!!!!", controlsData);
+  logger.debug("Controls data", { controlsData });
   const createAccountUrl = controlsData?.controls?.account?.create;
   if (!createAccountUrl) throw new Error("Create Account url not found.");
 
@@ -32,7 +34,7 @@ export async function processAccount(
     method: "POST",
   });
   const createAccountData = (await createAccountResponse.json()) as any;
-  console.log("Create Account data!!!!!!!!", createAccountData);
+  logger.debug("Create account data", { createAccountData });
 
   const authorization = createAccountData.authorization;
 
@@ -40,7 +42,7 @@ export async function processAccount(
     headers: { authorization: `CSS-Account-Token ${authorization}` },
   });
   const controlsDataAuth = (await controlsResponseAuth.json()) as any;
-  console.log("Controls Data Auth", controlsDataAuth);
+  logger.debug("Controls data auth", { controlsDataAuth });
 
   // Step 3: Create a Password
   const createPasswordUri = controlsDataAuth.controls.password.create;
@@ -63,7 +65,7 @@ export async function processAccount(
     throw new HttpError(400, "Could not create new account");
   }
   const createPasswordResult = (await createPasswordResponse.json()) as any;
-  console.log("CreatePasswordResult", createPasswordResult);
+  logger.debug("Create password result", { createPasswordResult });
 
   // Step 4: Create the Pod
   const createPodUrl = createPasswordResult.controls.account.pod;
@@ -78,7 +80,7 @@ export async function processAccount(
     }),
   });
   const createPodResult = (await createPodResponse.json()) as any;
-  console.log("CreatePodResult", createPodResult);
+  logger.debug("Create pod result", { createPodResult });
 
   // const existingPods: Record<string, string> = loginUrlData?.pods ?? {};
 

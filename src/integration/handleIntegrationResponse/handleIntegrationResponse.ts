@@ -9,8 +9,10 @@ import { applyResourceOrContainerUpdate } from "./files/applyResourceOrContainer
 export async function handleIntegrationResponse(
   IntegrationResponse: IntegrationResponse,
 ): Promise<void> {
-  const { rootFilePath } = getGlobals();
-  console.log("Integration Return", IntegrationResponse);
+  const { rootFilePath, logger } = getGlobals();
+  logger.info("Handling integration response", {
+    response: IntegrationResponse,
+  });
   // Process Accounts
   await Promise.all(
     IntegrationResponse?.accounts?.map((accountChanges) =>

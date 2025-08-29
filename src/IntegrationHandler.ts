@@ -1,5 +1,6 @@
 import { HttpHandler, HttpHandlerInput } from "@solid/community-server";
 import { Express, response } from "express";
+import { getLoggerFor } from "global-logger-factory";
 import { createApp } from "./createApp";
 
 export interface IntegrationHandlerArgs {
@@ -11,6 +12,7 @@ export interface IntegrationHandlerArgs {
  */
 export class IntegrationHandler extends HttpHandler {
   private app: Express;
+  protected readonly logger = getLoggerFor(this);
 
   constructor(baseUrl: string, rootFilePath: string) {
     super();

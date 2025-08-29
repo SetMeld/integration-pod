@@ -29,11 +29,23 @@ export async function createIntegrationGitRepo(
     // Return the git address (SSH format)
     const gitAddress = `ssh://localhost:2222/srv/git/${integrationId}.git`;
 
-    console.log(`[${integrationId}] Created git repository at ${gitRepoPath}`);
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherInfo(
+      integrationId,
+      `Created git repository at ${gitRepoPath}`,
+    );
 
     return gitAddress;
   } catch (error) {
-    console.error(`[${integrationId}] Failed to create git repository:`, error);
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherError(
+      integrationId,
+      "Failed to create git repository",
+      { error },
+    );
+    logger.error(`Failed to create git repository for ${integrationId}`, {
+      error,
+    });
     throw new Error(
       `Failed to create git repository for integration ${integrationId}`,
     );
@@ -77,9 +89,21 @@ export async function deleteIntegrationGitRepo(
   try {
     const gitRepoPath = getIntegrationGitPath(integrationId);
     await fs.rm(gitRepoPath, { recursive: true, force: true });
-    console.log(`[${integrationId}] Deleted git repository at ${gitRepoPath}`);
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherInfo(
+      integrationId,
+      `Deleted git repository at ${gitRepoPath}`,
+    );
   } catch (error) {
-    console.error(`[${integrationId}] Failed to delete git repository:`, error);
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherError(
+      integrationId,
+      "Failed to delete git repository",
+      { error },
+    );
+    logger.error(`Failed to delete git repository for ${integrationId}`, {
+      error,
+    });
     throw new Error(
       `Failed to delete git repository for integration ${integrationId}`,
     );

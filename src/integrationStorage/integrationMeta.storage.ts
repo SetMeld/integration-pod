@@ -40,14 +40,21 @@ export async function saveIntegrationMeta(
     // Save the meta data as JSON
     await fs.writeFile(metaFilePath, JSON.stringify(integrationMeta, null, 2));
 
-    console.log(
-      `[${integrationMeta.id}] Saved integration meta to ${metaFilePath}`,
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherInfo(
+      integrationMeta.id,
+      `Saved integration meta to ${metaFilePath}`,
     );
   } catch (error) {
-    console.error(
-      `[${integrationMeta.id}] Failed to save integration meta:`,
-      error,
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherError(
+      integrationMeta.id,
+      "Failed to save integration meta",
+      { error },
     );
+    logger.error(`Failed to save integration meta for ${integrationMeta.id}`, {
+      error,
+    });
     throw new Error(
       `Failed to save integration meta for ${integrationMeta.id}`,
     );
@@ -69,7 +76,10 @@ export async function readIntegrationMeta(
     const metaData = await fs.readFile(metaFilePath, "utf-8");
     return JSON.parse(metaData) as IntegrationMeta;
   } catch (error) {
-    console.error(`[${integrationId}] Failed to read integration meta:`, error);
+    const { logger } = getGlobals();
+    logger.error(`Failed to read integration meta for ${integrationId}`, {
+      error,
+    });
     throw new Error(`Failed to read integration meta for ${integrationId}`);
   }
 }
@@ -87,7 +97,8 @@ export async function listIntegrationMeta(): Promise<string[]> {
       .filter((file) => file.endsWith(".json"))
       .map((file) => file.replace(".json", ""));
   } catch (error) {
-    console.error("Failed to list integration meta files:", error);
+    const { logger } = getGlobals();
+    logger.error("Failed to list integration meta files", { error });
     return [];
   }
 }
@@ -120,14 +131,21 @@ export async function deleteIntegrationMeta(
 
   try {
     await fs.unlink(metaFilePath);
-    console.log(
-      `[${integrationId}] Deleted integration meta at ${metaFilePath}`,
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherInfo(
+      integrationId,
+      `Deleted integration meta at ${metaFilePath}`,
     );
   } catch (error) {
-    console.error(
-      `[${integrationId}] Failed to delete integration meta:`,
-      error,
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherError(
+      integrationId,
+      "Failed to delete integration meta",
+      { error },
     );
+    logger.error(`Failed to delete integration meta for ${integrationId}`, {
+      error,
+    });
     throw new Error(`Failed to delete integration meta for ${integrationId}`);
   }
 }

@@ -4,6 +4,7 @@ import { HttpError } from "../HttpError";
 import { IntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
 import { saveIntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
 import { createIntegrationGitRepo } from "../../integrationStorage/integrationGit.storage";
+import { getGlobals } from "../../globals";
 
 export interface CreateIntegrationRequest {
   name: string;
@@ -23,7 +24,7 @@ function generateIntegrationId(): string {
  * @param res - Express response object
  */
 export const createIntegrationHandler: RequestHandler = async (req, res) => {
-  console.log("In here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  const { logger } = getGlobals();
   try {
     const { name }: CreateIntegrationRequest = req.body;
 
@@ -57,12 +58,16 @@ export const createIntegrationHandler: RequestHandler = async (req, res) => {
     // Save integration meta data
     await saveIntegrationMeta(integrationMeta);
 
-    console.log(`[${integrationId}] Created new integration: ${trimmedName}`);
+    await logger.logIntegrationOtherInfo(
+      integrationId,
+      `Created new integration: ${trimmedName}`,
+    );
+    logger.info(`Created new integration: ${trimmedName}`, { integrationId });
 
     // Return the created integration
     res.status(201).json(integrationMeta);
   } catch (error) {
-    console.error("Failed to create integration:", error);
+    logger.error("Failed to create integration", { error });
 
     if (error instanceof HttpError) {
       throw error;

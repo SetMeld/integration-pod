@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { HttpError } from "../HttpError";
 import { IntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
 import { readIntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
+import { getGlobals } from "../../globals";
 
 /**
  * Reads a single integration by ID from storage
@@ -9,6 +10,7 @@ import { readIntegrationMeta } from "../../integrationStorage/integrationMeta.st
  * @param res - Express response object
  */
 export const readIntegrationHandler: RequestHandler = async (req, res) => {
+  const { logger } = getGlobals();
   try {
     const { id } = req.params;
 
@@ -25,14 +27,15 @@ export const readIntegrationHandler: RequestHandler = async (req, res) => {
     // Read the integration meta data
     const integrationMeta = await readIntegrationMeta(integrationId);
 
-    console.log(
-      `[${integrationId}] Retrieved integration: ${integrationMeta.name}`,
-    );
+    logger.info(`Retrieved integration: ${integrationMeta.name}`, {
+      integrationId,
+    });
 
     // Return the integration
     res.json(integrationMeta);
   } catch (error) {
-    console.error("Failed to read integration:", error);
+    const integrationId = req.params.id;
+    logger.error("Failed to read integration", { error, integrationId });
 
     if (error instanceof HttpError) {
       throw error;

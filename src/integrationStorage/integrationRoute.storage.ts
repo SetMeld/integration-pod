@@ -47,7 +47,8 @@ export async function ensureIntegrationFolder(): Promise<void> {
       await writeAclFile(aclFilePath, aclContent);
     }
   } catch (error) {
-    console.error("Error creating .integration folder or .acl file:", error);
+    const { logger } = getGlobals();
+    logger.error("Error creating .integration folder or .acl file", { error });
   }
 }
 

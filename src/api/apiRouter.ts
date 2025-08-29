@@ -12,6 +12,7 @@ import { readIntegrationsHandler } from "./integration/readIntegrations.handler"
 import { readIntegrationHandler } from "./integration/readIntegration.handler";
 import { updateIntegrationHandler } from "./integration/updateIntegration.handler";
 import { deleteIntegrationHandler } from "./integration/deleteIntegration.handler";
+import { readIntegrationLogsHandler } from "./logs/readIntegrationLogs.handler";
 
 export function createApiRouter(base: string) {
   const apiRouter = express.Router();
@@ -64,17 +65,7 @@ export function createApiRouter(base: string) {
    * LOGS
    * ===========================================================================
    */
-  apiRouter.get("/integration/:id/log/deploy", (req, res) => {
-    res.send("These are deploy logs.");
-  });
-
-  apiRouter.get("/integration/:id/log/trigger", (req, res) => {
-    res.send("These are trigger logs");
-  });
-
-  apiRouter.get("/integration/:id/log/integration", (req, res) => {
-    res.send("These are integration logs");
-  });
+  apiRouter.get("/integration/:id/log", readIntegrationLogsHandler);
 
   /**
    * ===========================================================================
@@ -108,8 +99,9 @@ export function createApiRouter(base: string) {
    */
   apiRouter.use(
     (err: unknown, req: Request, res: Response, _next: NextFunction) => {
+      const { logger } = getGlobals();
       if (err instanceof Error) {
-        console.error(err);
+        logger.error("API Error", { error: err.message, stack: err.stack });
       }
       const error = HttpError.from(err);
       res.status(error.status).send(error.message);

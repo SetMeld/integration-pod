@@ -5,6 +5,7 @@ import {
   readIntegrationMeta,
   saveIntegrationMeta,
 } from "../../integrationStorage/integrationMeta.storage";
+import { getGlobals } from "../../globals";
 
 export type UpdateableIntegrationMetaRequest = Pick<
   IntegrationMeta,
@@ -17,6 +18,7 @@ export type UpdateableIntegrationMetaRequest = Pick<
  * @param res - Express response object
  */
 export const updateIntegrationHandler: RequestHandler = async (req, res) => {
+  const { logger } = getGlobals();
   try {
     const { id } = req.params;
     const updateData: UpdateableIntegrationMetaRequest = req.body;
@@ -69,12 +71,17 @@ export const updateIntegrationHandler: RequestHandler = async (req, res) => {
     // Save the updated meta data
     await saveIntegrationMeta(updatedMeta);
 
-    console.log(`[${integrationId}] Updated integration: ${updatedMeta.name}`);
+    await logger.logIntegrationOtherInfo(
+      integrationId,
+      `Updated integration: ${updatedMeta.name}`,
+    );
+    logger.info(`Updated integration: ${updatedMeta.name}`, { integrationId });
 
     // Return the updated integration
     res.json(updatedMeta);
   } catch (error) {
-    console.error("Failed to update integration:", error);
+    const integrationId = req.params.id;
+    logger.error("Failed to update integration", { error, integrationId });
 
     if (error instanceof HttpError) {
       throw error;

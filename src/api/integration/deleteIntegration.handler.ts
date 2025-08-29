@@ -3,6 +3,7 @@ import { HttpError } from "../HttpError";
 import { deleteIntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
 import { deleteIntegrationGitRepo } from "../../integrationStorage/integrationGit.storage";
 import { removeIntegration } from "../../integrationStorage/integrationCode.storage";
+import { getGlobals } from "../../globals";
 
 /**
  * Deletes an integration and all its associated data
@@ -10,6 +11,7 @@ import { removeIntegration } from "../../integrationStorage/integrationCode.stor
  * @param res - Express response object
  */
 export const deleteIntegrationHandler: RequestHandler = async (req, res) => {
+  const { logger } = getGlobals();
   try {
     const { id } = req.params;
 
@@ -32,14 +34,19 @@ export const deleteIntegrationHandler: RequestHandler = async (req, res) => {
     // Delete integration code
     await removeIntegration(integrationId);
 
-    console.log(
-      `[${integrationId}] Deleted integration and all associated data`,
+    await logger.logIntegrationOtherInfo(
+      integrationId,
+      "Deleted integration and all associated data",
     );
+    logger.info("Deleted integration and all associated data", {
+      integrationId,
+    });
 
     // Return success response
     res.status(204).send();
   } catch (error) {
-    console.error("Failed to delete integration:", error);
+    const integrationId = req.params.id;
+    logger.error("Failed to delete integration", { error, integrationId });
 
     if (error instanceof HttpError) {
       throw error;
