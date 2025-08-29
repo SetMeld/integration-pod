@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { IntegrationInformation } from "../../../../common/IntegrationInformation";
 import { useUpdateIntegration } from "../api/useUpdateIntegration";
+import { useDeleteIntegration } from "../api/useDeleteIntegration";
+import { useDialog } from "~/components/nav/DialogProvider";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +22,7 @@ interface IntegrationModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpdate?: (updatedIntegration: IntegrationInformation) => void;
+  onDelete?: (deletedIntegrationId: string) => void;
 }
 
 export function IntegrationModal({
@@ -27,11 +30,15 @@ export function IntegrationModal({
   open,
   onOpenChange,
   onUpdate,
+  onDelete,
 }: IntegrationModalProps) {
   const updateIntegration = useUpdateIntegration();
+  const deleteIntegration = useDeleteIntegration();
+  const { prompt } = useDialog();
   const [name, setName] = useState(integration.name);
   const [targetUrl, setTargetUrl] = useState(integration.targetFile);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleCopyGitUrl = async () => {
     try {
@@ -64,6 +71,31 @@ export function IntegrationModal({
       console.error("Failed to update integration:", error);
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    // Show confirmation dialog
+    const confirmed = await prompt(
+      `Are you sure you want to delete "${integration.name}"?`,
+      "Type 'DELETE' to confirm",
+      "Delete Integration"
+    );
+    
+    // Only proceed if user typed 'DELETE'
+    if (confirmed !== "DELETE") {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await deleteIntegration(integration.id);
+      onDelete?.(integration.id);
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Failed to delete integration:", error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -136,9 +168,10 @@ export function IntegrationModal({
 
         <DialogFooter className="pt-6 gap-3">
           <Button
-            variant="outline"
-            onPress={() => onOpenChange(false)}
-            text="Cancel"
+            variant="destructive"
+            onPress={handleDelete}
+            text="Delete Integration"
+            isLoading={isDeleting}
             className="flex-1"
           />
           <Button

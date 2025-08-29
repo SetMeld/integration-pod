@@ -60,6 +60,12 @@ export function IntegrationDashboard() {
     });
   }, []);
 
+  const handleIntegrationDelete = useCallback((deletedIntegrationId: string) => {
+    setIntegrations((oldIntegrations) => {
+      return oldIntegrations.filter((integration) => integration.id !== deletedIntegrationId);
+    });
+  }, []);
+
   return (
     <View className="flex-1 bg-background">
       {/* Header Panel with buttons */}
@@ -109,6 +115,7 @@ export function IntegrationDashboard() {
           open={isModalOpen}
           onOpenChange={handleModalClose}
           onUpdate={handleIntegrationUpdate}
+          onDelete={handleIntegrationDelete}
         />
       )}
     </View>

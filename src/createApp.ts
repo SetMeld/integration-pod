@@ -17,12 +17,14 @@ export function createApp(base: string, rootFilePath: string): Express {
     internalDataFilePath,
     "integration-meta",
   );
+  const integrationGitPath = path.join(internalDataFilePath, "integration-git");
 
   setGlobals({
     rootFilePath,
     internalDataFilePath,
     integrationCodePath,
     integrationMetaPath,
+    integrationGitPath,
   });
 
   ensureIntegrationFolder();
