@@ -6,6 +6,7 @@ export interface IntegrationPodGlobals {
   integrationCodePath: string;
   integrationMetaPath: string;
   integrationGitPath: string;
+  gitUri: string;
   logger: Logger;
 }
 
@@ -15,6 +16,7 @@ const globals: IntegrationPodGlobals = {
   integrationCodePath: "",
   integrationMetaPath: "",
   integrationGitPath: "",
+  gitUri: "",
   logger: new Logger(),
 };
 

@@ -9,7 +9,7 @@ mkdir -p "${DEV_DIR}/integration-git" "${HOST}"
 [[ -f "${HOST}/ssh_host_ed25519_key" ]] || ssh-keygen -t ed25519 -N "" -f "${HOST}/ssh_host_ed25519_key"
 
 touch "${DEV_DIR}/authorized_keys"
-chmod 666 "${DEV_DIR}/authorized_keys"
+chmod 600 "${DEV_DIR}/authorized_keys"
 
 cat > "${SSHD_DIR}/sshd_config" <<EOF
 Port 2229

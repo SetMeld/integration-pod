@@ -19,7 +19,7 @@ WORKERS="1"
 GIT_PORT="2222"
 NODE_BIN="${NODE_BIN:-/usr/lib/setmeld-pod/runtime/bin/node}"
 APP_DIR="/usr/lib/setmeld-pod"
-REPO_SUB=".internal/integration-repo"
+REPO_SUB=".internal/integration-git"
 ENV_FILE="/etc/setmeld-pod/config.env"
 
 [[ -f "$ENV_FILE" ]] && source "$ENV_FILE"

@@ -1,6 +1,5 @@
 import { RequestHandler } from "express";
 import { HttpError } from "../HttpError";
-import { IntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
 import { readIntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
 import { getGlobals } from "../../globals";
 
@@ -27,12 +26,18 @@ export const readIntegrationHandler: RequestHandler = async (req, res) => {
     // Read the integration meta data
     const integrationMeta = await readIntegrationMeta(integrationId);
 
+    // Add the calculated git address
+    const integrationWithGitAddress = {
+      ...integrationMeta,
+      gitAddress: getIntegrationGitAddress(integrationId),
+    };
+
     logger.info(`Retrieved integration: ${integrationMeta.name}`, {
       integrationId,
     });
 
     // Return the integration
-    res.json(integrationMeta);
+    res.json(integrationWithGitAddress);
   } catch (error) {
     const integrationId = req.params.id;
     logger.error("Failed to read integration", { error, integrationId });

@@ -13,7 +13,7 @@
     "dev:sshd": "bash ./scripts/dev-sshd.sh",
     "dev:server": "nodemon --watch src --watch config --ext ts,json --exec \"npm run build:server && npm run start:server\"",
     "dev:ui": "cd ui && npm run build:server:watch",
-    "start:server": "node ./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data",
+    "start:server": "node ./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -g localhost:2229",
     "build:server": "npm run build:server:ts && npm run build:server:components",
     "build:server:components": "componentsjs-generator -s src -c dist/components -r iss -i .componentsignore",
     "build:server:ts": "tsc",

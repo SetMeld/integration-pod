@@ -3,7 +3,10 @@ import { randomBytes } from "crypto";
 import { HttpError } from "../HttpError";
 import { IntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
 import { saveIntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
-import { createIntegrationGitRepo } from "../../integrationStorage/integrationGit.storage";
+import {
+  createIntegrationGitRepo,
+  getIntegrationGitSshUrl,
+} from "../../integrationStorage/integrationGit.storage";
 import { getGlobals } from "../../globals";
 
 export interface CreateIntegrationRequest {
@@ -42,14 +45,13 @@ export const createIntegrationHandler: RequestHandler = async (req, res) => {
     const integrationId = generateIntegrationId();
 
     // Create git repository
-    const gitAddress = await createIntegrationGitRepo(integrationId);
+    await createIntegrationGitRepo(integrationId);
 
     // Create integration meta data
     const integrationMeta: IntegrationMeta = {
       id: integrationId,
       name: trimmedName,
       targetFile: `/integration-data/${integrationId}.ttl`,
-      gitAddress,
       status: { type: "ok" },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -58,6 +60,12 @@ export const createIntegrationHandler: RequestHandler = async (req, res) => {
     // Save integration meta data
     await saveIntegrationMeta(integrationMeta);
 
+    // Add the calculated git address for the response
+    const integrationWithGitAddress = {
+      ...integrationMeta,
+      gitAddress: getIntegrationGitSshUrl(integrationId),
+    };
+
     await logger.logIntegrationOtherInfo(
       integrationId,
       `Created new integration: ${trimmedName}`,
@@ -65,7 +73,7 @@ export const createIntegrationHandler: RequestHandler = async (req, res) => {
     logger.info(`Created new integration: ${trimmedName}`, { integrationId });
 
     // Return the created integration
-    res.status(201).json(integrationMeta);
+    res.status(201).json(integrationWithGitAddress);
   } catch (error) {
     logger.error("Failed to create integration", { error });
 

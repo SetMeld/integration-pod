@@ -3,6 +3,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { getGlobals } from "../globals";
+import { getIntegrationGitSshUrl } from "./integrationGit.storage";
 
 export type IntegrationStatus =
   | { type: "ok" }
@@ -12,7 +13,6 @@ export interface IntegrationMeta {
   id: string;
   name: string;
   targetFile: string;
-  gitAddress: string;
   status: IntegrationStatus;
   createdAt?: string;
   updatedAt?: string;
@@ -37,7 +37,7 @@ export async function saveIntegrationMeta(
     // Create the directory if it doesn't exist
     await fs.mkdir(path.dirname(metaFilePath), { recursive: true });
 
-    // Save the meta data as JSON
+    // Save the meta data as JSON (gitAddress is calculated on the fly, not stored)
     await fs.writeFile(metaFilePath, JSON.stringify(integrationMeta, null, 2));
 
     const { logger } = getGlobals();
@@ -74,7 +74,12 @@ export async function readIntegrationMeta(
 
   try {
     const metaData = await fs.readFile(metaFilePath, "utf-8");
-    return JSON.parse(metaData) as IntegrationMeta;
+    const parsedData = JSON.parse(metaData);
+
+    // Remove gitAddress field if it exists (for backward compatibility)
+    const { gitAddress: _gitAddress, ...integrationMeta } = parsedData;
+
+    return integrationMeta as IntegrationMeta;
   } catch (error) {
     const { logger } = getGlobals();
     logger.error(`Failed to read integration meta for ${integrationId}`, {

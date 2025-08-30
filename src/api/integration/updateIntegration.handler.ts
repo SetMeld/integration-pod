@@ -6,6 +6,7 @@ import {
   saveIntegrationMeta,
 } from "../../integrationStorage/integrationMeta.storage";
 import { getGlobals } from "../../globals";
+import { getIntegrationGitSshUrl } from "../../integrationStorage/integrationGit.storage";
 
 export type UpdateableIntegrationMetaRequest = Pick<
   IntegrationMeta,
@@ -71,6 +72,12 @@ export const updateIntegrationHandler: RequestHandler = async (req, res) => {
     // Save the updated meta data
     await saveIntegrationMeta(updatedMeta);
 
+    // Add the calculated git address for the response
+    const integrationWithGitAddress = {
+      ...updatedMeta,
+      gitAddress: getIntegrationGitSshUrl(integrationId),
+    };
+
     await logger.logIntegrationOtherInfo(
       integrationId,
       `Updated integration: ${updatedMeta.name}`,
@@ -78,7 +85,7 @@ export const updateIntegrationHandler: RequestHandler = async (req, res) => {
     logger.info(`Updated integration: ${updatedMeta.name}`, { integrationId });
 
     // Return the updated integration
-    res.json(updatedMeta);
+    res.json(integrationWithGitAddress);
   } catch (error) {
     const integrationId = req.params.id;
     logger.error("Failed to update integration", { error, integrationId });

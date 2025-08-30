@@ -11,11 +11,10 @@ const execAsync = promisify(exec);
 /**
  * Creates a new bare git repository for an integration
  * @param integrationId - The unique identifier for the integration
- * @returns The git address for the repository
  */
 export async function createIntegrationGitRepo(
   integrationId: string,
-): Promise<string> {
+): Promise<void> {
   const { integrationGitPath } = getGlobals();
   const gitRepoPath = path.join(integrationGitPath, `${integrationId}.git`);
 
@@ -26,16 +25,11 @@ export async function createIntegrationGitRepo(
     // Initialize a bare git repository
     await execAsync(`git init --bare "${gitRepoPath}"`);
 
-    // Return the git address (SSH format)
-    const gitAddress = `ssh://localhost:2222/srv/git/${integrationId}.git`;
-
     const { logger } = getGlobals();
     await logger.logIntegrationOtherInfo(
       integrationId,
       `Created git repository at ${gitRepoPath}`,
     );
-
-    return gitAddress;
   } catch (error) {
     const { logger } = getGlobals();
     await logger.logIntegrationOtherError(
@@ -60,6 +54,26 @@ export async function createIntegrationGitRepo(
 export function getIntegrationGitPath(integrationId: string): string {
   const { integrationGitPath } = getGlobals();
   return path.join(integrationGitPath, `${integrationId}.git`);
+}
+
+/**
+ * Gets the SSH URL for an integration repository
+ * @param integrationId - The unique identifier for the integration
+ * @returns The SSH URL for the git repository
+ */
+export function getIntegrationGitSshUrl(integrationId: string): string {
+  const { gitUri, integrationGitPath } = getGlobals();
+
+  // Check if we're in development mode by looking for localhost in gitUri
+  const isDevMode = gitUri.includes("localhost");
+
+  if (isDevMode) {
+    // In dev mode, use the full path to the repository
+    return `${gitUri}/${integrationGitPath}/${integrationId}.git`;
+  } else {
+    // In production mode, use just the integration ID
+    return `${gitUri}/${integrationId}.git`;
+  }
 }
 
 /**

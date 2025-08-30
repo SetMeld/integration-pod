@@ -51,7 +51,63 @@
       },
       "rootFilePath": {
         "@id": "urn:solid-server:default:variable:rootFilePath"
+      },
+      "gitUri": {
+        "@id": "urn:solid-server:default:variable:gitUri"
       }
+    },
+    {
+      "comment": "The ssh uri for the git server (example.com:2222)",
+      "@id": "urn:solid-server:default:variable:gitUri",
+      "@type": "Variable"
+    },
+    {
+      "@type": "Override",
+      "overrideInstance": {
+        "@id": "urn:solid-server-app-setup:default:CliExtractor"
+      },
+      "overrideSteps": [
+        {
+          "@type": "OverrideListInsertAt",
+          "overrideParameter": {
+            "@id": "YargsCliExtractor:_parameters"
+          },
+          "overrideTarget": 0,
+          "overrideValue": {
+            "@type": "YargsParameter",
+            "name": "gitUri",
+            "options": {
+              "alias": "g",
+              "requiresArg": true,
+              "type": "array",
+              "describe": "The URI for the git server. (example.com:2222)"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "@type": "Override",
+      "overrideInstance": {
+        "@id": "urn:solid-server-app-setup:default:ShorthandResolver"
+      },
+      "overrideSteps": [
+        {
+          "@type": "OverrideListInsertAt",
+          "overrideParameter": {
+            "@id": "CombinedShorthandResolver:_resolvers"
+          },
+          "overrideTarget": 0,
+          "overrideValue": {
+            "CombinedShorthandResolver:_resolvers_key": "urn:solid-server:default:variable:gitUri",
+            "CombinedShorthandResolver:_resolvers_value": {
+              "@type": "KeyExtractor",
+              "key": "gitUri",
+              "defaultValue": "localhost:2222"
+            }
+          }
+        }
+      ]
     }
   ]
 }

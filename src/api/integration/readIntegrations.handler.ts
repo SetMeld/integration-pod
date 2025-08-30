@@ -6,6 +6,7 @@ import {
   readIntegrationMeta,
 } from "../../integrationStorage/integrationMeta.storage";
 import { getGlobals } from "../../globals";
+import { getIntegrationGitSshUrl } from "../../integrationStorage/integrationGit.storage";
 
 /**
  * Reads all integrations from storage
@@ -24,7 +25,12 @@ export const readIntegrationsHandler: RequestHandler = async (req, res) => {
     for (const integrationId of integrationIds) {
       try {
         const integrationMeta = await readIntegrationMeta(integrationId);
-        integrations.push(integrationMeta);
+        // Add the calculated git address
+        const integrationWithGitAddress = {
+          ...integrationMeta,
+          gitAddress: getIntegrationGitSshUrl(integrationId),
+        };
+        integrations.push(integrationWithGitAddress);
       } catch (error) {
         logger.error(`Failed to read integration meta for ${integrationId}`, {
           error,

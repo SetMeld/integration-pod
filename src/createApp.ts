@@ -5,7 +5,11 @@ import { loadAllTriggers } from "./integration/triggers/loadAllTriggers";
 import { setGlobals } from "./globals";
 import { ensureIntegrationFolder } from "./integrationStorage/integrationRoute.storage";
 
-export function createApp(base: string, rootFilePath: string): Express {
+export function createApp(
+  base: string,
+  rootFilePath: string,
+  gitUri: string,
+): Express {
   const app = express();
 
   const internalDataFilePath = path.join(rootFilePath, ".internal");
@@ -21,6 +25,7 @@ export function createApp(base: string, rootFilePath: string): Express {
 
   setGlobals({
     rootFilePath,
+    gitUri,
     internalDataFilePath,
     integrationCodePath,
     integrationMetaPath,
