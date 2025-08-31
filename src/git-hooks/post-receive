@@ -1,0 +1,54 @@
+#!/bin/bash
+# Git post-receive hook for SetMeld Pod
+# This hook is triggered when code is pushed to the integration-git repository
+# It sends a request to the postCommit API endpoint
+
+set -euo pipefail
+
+# Configuration
+NODE_APP_HOST="${NODE_APP_HOST:-localhost}"
+NODE_APP_PORT="${NODE_APP_PORT:-3000}"
+API_ENDPOINT="http://${NODE_APP_HOST}:${NODE_APP_PORT}/.integration/api/git-commit-hook"
+
+# Read the ref information from stdin
+while read oldrev newrev refname; do
+    # Skip if this is a delete operation (newrev is all zeros)
+    if [ "$newrev" = "0000000000000000000000000000000000000000" ]; then
+        continue
+    fi
+    
+    # Get the repository path (current working directory should be the git repo)
+    repo_path="$PWD"
+    
+    # Prepare the JSON payload
+    json_payload=$(cat <<EOF
+{
+    "repo": "$repo_path",
+    "ref": "$refname",
+    "oldrev": "$oldrev",
+    "newrev": "$newrev"
+}
+EOF
+)
+    
+    # Send the HTTP request to the postCommit endpoint
+    # Use curl with timeout and retry logic
+    if command -v curl >/dev/null 2>&1; then
+        curl -X POST "$API_ENDPOINT" \
+             -H "Content-Type: application/json" \
+             -H "X-Forwarded-Host: ${NODE_APP_HOST}:${NODE_APP_PORT}" \
+             -H "X-Forwarded-Proto: http" \
+             --connect-timeout 10 \
+             --max-time 30 \
+             --retry 2 \
+             --retry-delay 1 \
+             --data "$json_payload" \
+             --silent \
+             --show-error || {
+            echo "Warning: Failed to notify postCommit endpoint at $API_ENDPOINT" >&2
+        }
+    else
+        echo "Warning: curl not available, cannot notify postCommit endpoint" >&2
+    fi
+done
+

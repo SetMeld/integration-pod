@@ -22,6 +22,8 @@ contents:
     dst: /usr/lib/setmeld-pod/ui/dist-server/
   - src: ./config
     dst: /usr/lib/setmeld-pod/config/
+  - src: ./scripts/git-hooks/
+    dst: /usr/lib/setmeld-pod/scripts/git-hooks/
   - src: ./node_modules/
     dst: /usr/lib/setmeld-pod/node_modules
 

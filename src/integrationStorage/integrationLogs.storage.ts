@@ -101,7 +101,7 @@ class IntegrationLogsStorage {
       const offset = options.offset || 0;
       const limit = options.limit || 100;
 
-      return logs.slice(offset, offset + limit).reverse(); // Return newest first
+      return logs.slice(offset, offset + limit); // Return in chronological order (oldest first)
     } catch {
       return [];
     }

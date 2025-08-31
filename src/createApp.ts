@@ -4,6 +4,7 @@ import path from "path";
 import { loadAllTriggers } from "./integration/triggers/loadAllTriggers";
 import { setGlobals } from "./globals";
 import { ensureIntegrationFolder } from "./integrationStorage/integrationRoute.storage";
+import { installGitHooksForAllRepos } from "./integrationStorage/integrationGit.storage";
 
 export function createApp(
   base: string,
@@ -33,6 +34,9 @@ export function createApp(
   });
 
   ensureIntegrationFolder();
+
+  // Install git hooks for all existing repositories
+  installGitHooksForAllRepos();
 
   const apiRouter = createApiRouter(base);
 

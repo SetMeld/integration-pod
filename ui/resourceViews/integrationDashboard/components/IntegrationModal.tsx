@@ -80,8 +80,7 @@ export function IntegrationModal({
     // Show confirmation dialog
     const confirmed = await prompt(
       `Are you sure you want to delete "${integration.name}"?`,
-      "Type 'DELETE' to confirm",
-      "Delete Integration"
+      "Type 'DELETE' to confirm"
     );
     
     // Only proceed if user typed 'DELETE'

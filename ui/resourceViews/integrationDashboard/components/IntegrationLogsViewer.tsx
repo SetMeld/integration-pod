@@ -42,8 +42,8 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
       const response = await getLogs(integrationId, { ...filters, ...options });
       
       if (append) {
-        // Prepend older logs to the beginning
-        setLogs(prevLogs => [...response.logs, ...prevLogs]);
+        // Append older logs to the end
+        setLogs(prevLogs => [...prevLogs, ...response.logs]);
       } else {
         setLogs(response.logs);
       }
@@ -178,11 +178,11 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
             ref={scrollViewRef}
             className="flex-1 p-4"
             showsVerticalScrollIndicator={true}
-            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
+            contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start' }}
           >
             {/* Load More Button */}
             {hasMoreLogs && (
-              <View className="mb-4 flex items-center">
+              <View className="mt-4 flex items-center">
                 <Button
                   variant="outline"
                   text={loadingMore ? "Loading..." : "Load More Logs"}

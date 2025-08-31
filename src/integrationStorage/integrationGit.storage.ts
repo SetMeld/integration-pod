@@ -9,6 +9,67 @@ import { getGlobals } from "../globals";
 const execAsync = promisify(exec);
 
 /**
+ * Installs the post-receive hook in a git repository
+ * @param gitRepoPath - The path to the git repository
+ * @param integrationId - The integration ID for logging
+ */
+async function installGitHook(
+  gitRepoPath: string,
+  integrationId: string,
+): Promise<void> {
+  try {
+    const { rootFilePath } = getGlobals();
+    const hooksDir = path.join(gitRepoPath, "hooks");
+    const hookPath = path.join(hooksDir, "post-receive");
+
+    // Determine the source hook path based on environment
+    const isDevMode = process.env.NODE_ENV !== "production";
+    const sourceHookPath = isDevMode
+      ? path.join(rootFilePath, "..", "src", "git-hooks", "post-receive")
+      : path.join(
+          "/usr",
+          "lib",
+          "setmeld-pod",
+          "dist",
+          "git-hooks",
+          "post-receive",
+        );
+
+    // Check if source hook exists
+    try {
+      await fs.access(sourceHookPath);
+    } catch {
+      const { logger } = getGlobals();
+      await logger.logIntegrationOtherInfo(
+        integrationId,
+        `Git hook not found at ${sourceHookPath}, skipping hook installation`,
+      );
+      return;
+    }
+
+    // Copy the hook file
+    await fs.copyFile(sourceHookPath, hookPath);
+
+    // Make it executable
+    await fs.chmod(hookPath, 0o755);
+
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherInfo(
+      integrationId,
+      `Installed git post-receive hook at ${hookPath}`,
+    );
+  } catch (error) {
+    const { logger } = getGlobals();
+    await logger.logIntegrationOtherError(
+      integrationId,
+      "Failed to install git hook",
+      { error },
+    );
+    // Don't throw - hook installation failure shouldn't prevent repo creation
+  }
+}
+
+/**
  * Creates a new bare git repository for an integration
  * @param integrationId - The unique identifier for the integration
  */
@@ -24,6 +85,9 @@ export async function createIntegrationGitRepo(
 
     // Initialize a bare git repository
     await execAsync(`git init --bare "${gitRepoPath}"`);
+
+    // Install the post-receive hook
+    await installGitHook(gitRepoPath, integrationId);
 
     const { logger } = getGlobals();
     await logger.logIntegrationOtherInfo(
@@ -90,6 +154,44 @@ export async function integrationGitRepoExists(
     return true;
   } catch {
     return false;
+  }
+}
+
+/**
+ * Installs git hooks for all existing git repositories
+ * This function scans the integration-git directory and installs hooks for any existing repositories
+ */
+export async function installGitHooksForAllRepos(): Promise<void> {
+  const { integrationGitPath, logger } = getGlobals();
+
+  try {
+    const entries = await fs.readdir(integrationGitPath, {
+      withFileTypes: true,
+    });
+    const gitRepos = entries
+      .filter((dirent) => dirent.isDirectory() && dirent.name.endsWith(".git"))
+      .map((dirent) => dirent.name);
+
+    logger.info(`Found ${gitRepos.length} existing git repositories`, {
+      gitRepos,
+    });
+
+    for (const repoName of gitRepos) {
+      const integrationId = path.basename(repoName, ".git");
+      const repoPath = path.join(integrationGitPath, repoName);
+      await installGitHook(repoPath, integrationId);
+    }
+
+    if (gitRepos.length > 0) {
+      logger.info(
+        `Successfully processed git hooks for ${gitRepos.length} repositories`,
+      );
+    }
+  } catch (error) {
+    logger.error("Failed to install git hooks for existing repositories", {
+      error,
+    });
+    // Don't throw - this shouldn't prevent app startup
   }
 }
 
