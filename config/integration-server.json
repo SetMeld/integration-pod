@@ -79,7 +79,7 @@
             "options": {
               "alias": "g",
               "requiresArg": true,
-              "type": "array",
+              "type": "string",
               "describe": "The URI for the git server. (example.com:2222)"
             }
           }

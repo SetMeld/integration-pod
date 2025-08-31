@@ -69,10 +69,10 @@ export function getIntegrationGitSshUrl(integrationId: string): string {
 
   if (isDevMode) {
     // In dev mode, use the full path to the repository
-    return `${gitUri}/${integrationGitPath}/${integrationId}.git`;
+    return `ssh://${gitUri}${integrationGitPath}/${integrationId}.git`;
   } else {
     // In production mode, use just the integration ID
-    return `${gitUri}/${integrationId}.git`;
+    return `ssh://${gitUri}/${integrationId}.git`;
   }
 }
 

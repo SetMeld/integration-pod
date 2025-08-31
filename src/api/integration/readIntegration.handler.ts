@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { HttpError } from "../HttpError";
 import { readIntegrationMeta } from "../../integrationStorage/integrationMeta.storage";
 import { getGlobals } from "../../globals";
+import { getIntegrationGitSshUrl } from "../../integrationStorage/integrationGit.storage";
 
 /**
  * Reads a single integration by ID from storage
@@ -29,7 +30,7 @@ export const readIntegrationHandler: RequestHandler = async (req, res) => {
     // Add the calculated git address
     const integrationWithGitAddress = {
       ...integrationMeta,
-      gitAddress: getIntegrationGitAddress(integrationId),
+      gitAddress: getIntegrationGitSshUrl(integrationId),
     };
 
     logger.info(`Retrieved integration: ${integrationMeta.name}`, {
