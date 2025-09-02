@@ -5,6 +5,56 @@ log() { echo "[setmeld-postinst] $*"; }
 
 log "Setting up SetMeld Pod"
 
+# Create necessary directories
+log "Creating SSH service directories..."
+mkdir -p /etc/setmeld-pod/sshd/hostkeys
+mkdir -p /var/lib/setmeld/data/.internal/integration-git
+
+# Generate SSH host key if it doesn't exist
+if [ ! -f /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key ]; then
+    log "Generating SSH host key..."
+    ssh-keygen -t ed25519 -N "" -f /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key
+    chmod 600 /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key
+fi
+
+# Create authorized_keys file with proper permissions
+log "Setting up authorized_keys file..."
+touch /var/lib/setmeld/data/.internal/authorized_keys
+chmod 600 /var/lib/setmeld/data/.internal/authorized_keys
+
+# Create sshd_config
+log "Creating SSH configuration..."
+cat > /etc/setmeld-pod/sshd/sshd_config <<EOF
+Port 2222
+Protocol 2
+HostKey /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key
+UsePAM no
+PasswordAuthentication no
+PubkeyAuthentication yes
+PermitTTY no
+AllowTcpForwarding no
+X11Forwarding no
+AuthorizedKeysFile /var/lib/setmeld/data/.internal/authorized_keys
+PidFile /run/setmeld-pod/sshd.pid
+SetEnv GIT_PROJECT_ROOT=/var/lib/setmeld/data/.internal/integration-git
+ForceCommand git-shell -c "\$SSH_ORIGINAL_COMMAND"
+EOF
+
+# Update the port in sshd_config to use GIT_PORT from config.env if available
+if [ -f /etc/setmeld-pod/config.env ]; then
+    GIT_PORT=$(grep "^GIT_PORT=" /etc/setmeld-pod/config.env | cut -d'=' -f2)
+    if [ -n "$GIT_PORT" ]; then
+        log "Updating SSH port to $GIT_PORT from config.env"
+        sed -i "s/^Port 2222/Port $GIT_PORT/" /etc/setmeld-pod/sshd/sshd_config
+    fi
+fi
+
+# Set proper ownership and permissions
+chown -R root:root /etc/setmeld-pod/sshd
+chmod 600 /etc/setmeld-pod/sshd/sshd_config
+
+log "SSH service setup complete"
+
 # Check if systemd is running as PID 1.
 # This prevents errors in non-systemd environments like Docker.
 if [ -d /run/systemd/system ]; then
@@ -17,6 +67,7 @@ if [ -d /run/systemd/system ]; then
   log "SetMeld Pod installation complete."
   log "Next steps:"
   log "  - Edit /etc/setmeld-pod/config.env if needed."
+  log "  - Add SSH public keys to /var/lib/setmeld/data/.internal/authorized_keys"
 else
   echo "Systemd not detected, skipping service management."
 fi

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
-echo "Stopping and disabling my_service.target..."
+set -euo pipefail
+
+echo "Stopping and disabling setmeld-pod.target..."
 systemctl disable setmeld-pod.target || true
 systemctl stop setmeld-pod.target || true
