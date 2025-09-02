@@ -20,8 +20,8 @@
     "build:server:ts": "tsc",
     "build:ui": "cd ui && npm install && npm run build:server",
     "build": "npm run build:server && npm run build:ui",
-    "bundle": "npm run build && bash ./scripts/build-packages.sh",
-    "start:bundle": "bash ./scripts/test-deb.sh"
+    "bundle": "npm run build && bash ./scripts/bundle-packages.sh",
+    "start:bundle": "bash ./scripts/start-deb.sh"
   },
   "repository": {
     "type": "git",

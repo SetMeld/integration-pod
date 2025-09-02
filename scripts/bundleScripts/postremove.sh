@@ -1,4 +1,6 @@
-#!/usr/bin/env bash
-set -e
-systemctl disable setmeld-pod.target || true
-systemctl stop setmeld-pod.target || true
+#!/bin/sh
+# Clean up the user if the package is being purged
+if [ "$1" = "purge" ]; then
+  echo "Purging user setmeld user..."
+  userdel setmeld || echo "User setmeld could not be removed."
+fi

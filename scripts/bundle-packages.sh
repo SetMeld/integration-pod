@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Build script for setmeld-pod packages with bundled Node.js
-# Usage: ./scripts/build-packages.sh [version]
+# Usage: ./scripts/bundle-packages.sh [version]
 
 VERSION="${1:-0.1.0}"
 NODE_VERSION="${NODE_VERSION:-20.16.0}"
@@ -41,10 +41,10 @@ else
 fi
 
 # Update version in nfpm config
-sed -i.bak "s/version: \"0.1.0\"/version: \"${VERSION}\"/" nfpm-amd64.yaml
-rm -f nfpm-amd64.yaml.bak
+sed -i.bak "s/version: \"0.1.0\"/version: \"${VERSION}\"/" nfpm.yaml
+rm -f nfpm.yaml.bak
 
-nfpm pkg --config nfpm-amd64.yaml --packager deb --target bundle/setmeld-pod_${VERSION}_amd64.deb
+ARCH=amd64 nfpm pkg --config nfpm.yaml --packager deb --target bundle/setmeld-pod_${VERSION}_amd64.deb
 
 # Build for arm64
 echo "Building arm64 package..."
@@ -56,10 +56,10 @@ else
 fi
 
 # Update version in nfpm config
-sed -i.bak "s/version: \"0.1.0\"/version: \"${VERSION}\"/" nfpm-arm64.yaml
-rm -f nfpm-arm64.yaml.bak
+sed -i.bak "s/version: \"0.1.0\"/version: \"${VERSION}\"/" nfpm.yaml
+rm -f nfpm.yaml.bak
 
-nfpm pkg --config nfpm-arm64.yaml --packager deb --target bundle/setmeld-pod_${VERSION}_arm64.deb
+ARCH=arm64 nfpm pkg --config nfpm.yaml --packager deb --target bundle/setmeld-pod_${VERSION}_arm64.deb
 
 echo "Build complete! Packages created in bundle/:"
 ls -la bundle/setmeld-pod_${VERSION}_*.deb

@@ -1,5 +1,5 @@
 name: "setmeld-pod"
-arch: "arm64"
+arch: ${ARCH}
 platform: "linux"
 version: "0.1.0"
 section: "utils"
@@ -11,11 +11,13 @@ license: "MIT"
 description: |
   SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
 
+# We vendor Node, so no nodejs dependency.
 depends:
   - openssh-server
   - git
 
 contents:
+  # app payload
   - src: ./package.json
     dst: /usr/lib/setmeld-pod/package.json
   - src: ./dist/
@@ -29,14 +31,12 @@ contents:
   - src: ./templates/
     dst: /usr/lib/setmeld-pod/templates
 
-  # bundled Node runtime (unpacked official tarball for linux-arm64)
-  - src: ./vendor/node-runtime-arm64/
+  # bundled Node runtime (unpacked official tarball for linux-x64)
+  - src: ./vendor/node-runtime-${ARCH}/
     dst: /usr/lib/setmeld-pod/runtime
+    expand: true
 
-  - src: ./scripts/bundleScripts/setmeld-pod
-    dst: /usr/bin/setmeld-pod
-    file_info: { mode: 0755 }
-
+  # systemd units (your ExecStart should call /usr/bin/setmeld-pod)
   - src: ./scripts/bundleScripts/setmeld-pod-node.service
     dst: /lib/systemd/system/setmeld-pod-node.service
   - src: ./scripts/bundleScripts/setmeld-pod-git-sshd.service
@@ -44,14 +44,17 @@ contents:
   - src: ./scripts/bundleScripts/setmeld-pod.target
     dst: /lib/systemd/system/setmeld-pod.target
 
+  # config dir
   - dst: /etc/setmeld-pod
     type: dir
     file_info: { mode: 0755 }
 
+  # data dir (ownership set in postinstall after creating user)
   - dst: /var/lib/setmeld/data
     type: dir
     file_info: { mode: 0755, owner: root, group: root }
 
+  # example env as config
   - src: ./scripts/bundleScripts/config.env.example
     dst: /etc/setmeld-pod/config.env
     type: config
@@ -59,5 +62,7 @@ contents:
 overrides:
   deb:
     scripts:
+      preinstall: ./scripts/bundleScripts/preinstall.sh
       postinstall: ./scripts/bundleScripts/postinstall.sh
+      preremove: ./scripts/bundleScripts/preremove.sh
       postremove: ./scripts/bundleScripts/postremove.sh
