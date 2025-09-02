@@ -21,7 +21,7 @@
     "build:ui": "cd ui && npm install && npm run build:server",
     "build": "npm run build:server && npm run build:ui",
     "bundle": "npm run build && bash ./scripts/build-packages.sh",
-    "test:bundle": "bash ./scripts/test-deb.sh"
+    "start:bundle": "bash ./scripts/test-deb.sh"
   },
   "repository": {
     "type": "git",

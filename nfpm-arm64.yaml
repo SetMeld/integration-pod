@@ -16,16 +16,18 @@ depends:
   - git
 
 contents:
+  - src: ./package.json
+    dst: /usr/lib/setmeld-pod/package.json
   - src: ./dist/
     dst: /usr/lib/setmeld-pod/dist
   - src: ./ui/dist-server/
-    dst: /usr/lib/setmeld-pod/ui/dist-server/
-  - src: ./config
-    dst: /usr/lib/setmeld-pod/config/
-  - src: ./scripts/git-hooks/
-    dst: /usr/lib/setmeld-pod/scripts/git-hooks/
+    dst: /usr/lib/setmeld-pod/ui/dist-server
+  - src: ./config/
+    dst: /usr/lib/setmeld-pod/config
   - src: ./node_modules/
     dst: /usr/lib/setmeld-pod/node_modules
+  - src: ./templates/
+    dst: /usr/lib/setmeld-pod/templates
 
   # bundled Node runtime (unpacked official tarball for linux-arm64)
   - src: ./vendor/node-runtime-arm64/
