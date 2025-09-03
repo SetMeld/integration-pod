@@ -1,11 +1,6 @@
 # SetMeld Pod
 
-SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
-
-## Features
-
-- **Community Solid Server (CSS)** with full Solid protocol support
-- **Git over SSH** with pretty repository URLs (`ssh://git@host:port/repo.git`)
+SetMeld Pod: A Solid Pod with tools for deploying data integrations.
 
 ## Prerequisites
 
@@ -16,6 +11,7 @@ SetMeld Pod: Community Solid Server + Git over SSH (git-shell).
 
 ### Production
 - nfpm (for packaging): `go install github.com/goreleaser/nfpm/v2/cmd/nfpm@latest`
+- 4 gigabytes of hard drive space
 
 ## Development
 
@@ -53,6 +49,46 @@ After running `npm run dev`, you can:
 - `npm run dev` - Start both services concurrently
 
 ## Production Deployment
+
+### Quick Deployment (Recommended)
+
+The easiest way to deploy SetMeld Pod to a cloud server is using our **simple Ansible deployment**:
+
+```bash
+# Install Ansible
+brew install ansible  # macOS
+sudo apt install ansible  # Ubuntu/Debian
+
+# Deploy with one command:
+cd ansible
+./deploy.sh user@myserver.com myserver.com
+
+# Or with custom settings:
+./deploy.sh user@myserver.com myserver.com 8080 false
+```
+
+**Why Ansible?** Professional deployment that's:
+- ✅ **Simple** - Everything in one file, easy to understand
+- ✅ **Professional** - Uses industry-standard Ansible
+- ✅ **Safe** - Idempotent, can run multiple times
+- ✅ **Maintainable** - Easy to modify and debug
+
+For detailed Ansible deployment instructions, see [ansible/README.md](./ansible/README.md).
+
+### Alternative: Custom Deployment Scripts
+
+We provide professional Ansible-based deployment for easy server setup:
+
+```bash
+# Deploy with one command
+cd ansible
+./deploy.sh user@myserver.com myserver.com
+
+# Or with custom settings
+./deploy.sh user@myserver.com myserver.com 8080 false
+```
+
+For detailed deployment instructions, see [ansible/README.md](./ansible/README.md).
 
 ### Building the Package
 
@@ -197,3 +233,24 @@ Using `SetEnv GIT_PROJECT_ROOT` + `git-shell` for clean URL mapping.
 ## License
 
 MIT
+
+
+## Notes
+Production
+
+```bash
+# Send the deb to the server
+scp ./bundle/setmeld-pod_0.1.0_amd64.deb jackson@sandbox:~/
+
+# Install the deb once it's uplaoded
+sudo apt-get install -y ./setmeld-pod_0.1.0_amd64.deb
+
+# Edit the configs on the server
+sudo vim /etc/setmeld-pod/config.env
+
+# Restart both services
+systemctl restart setmeld-pod.target
+
+# Logs for the node (CSS) service
+journalctl -u setmeld-pod-node.service
+```

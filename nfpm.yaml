@@ -39,11 +39,11 @@ contents:
     expand: true
 
   # systemd units (your ExecStart should call /usr/bin/setmeld-pod)
-  - src: ./scripts/bundleScripts/setmeld-pod-node.service
+  - src: ./scripts/debScripts/setmeld-pod-node.service
     dst: /lib/systemd/system/setmeld-pod-node.service
-  - src: ./scripts/bundleScripts/setmeld-pod-git-sshd.service
+  - src: ./scripts/debScripts/setmeld-pod-git-sshd.service
     dst: /lib/systemd/system/setmeld-pod-git-sshd.service
-  - src: ./scripts/bundleScripts/setmeld-pod.target
+  - src: ./scripts/debScripts/setmeld-pod.target
     dst: /lib/systemd/system/setmeld-pod.target
 
   # config dir
@@ -57,14 +57,14 @@ contents:
     file_info: { mode: 0755 }
 
   # example env as config
-  - src: ./scripts/bundleScripts/config.env.example
+  - src: ./scripts/debScripts/config.env.example
     dst: /etc/setmeld-pod/config.env
     type: config
 
 overrides:
   deb:
     scripts:
-      preinstall: ./scripts/bundleScripts/preinstall.sh
-      postinstall: ./scripts/bundleScripts/postinstall.sh
-      preremove: ./scripts/bundleScripts/preremove.sh
-      postremove: ./scripts/bundleScripts/postremove.sh
+      preinstall: ./scripts/debScripts/preinstall.sh
+      postinstall: ./scripts/debScripts/postinstall.sh
+      preremove: ./scripts/debScripts/preremove.sh
+      postremove: ./scripts/debScripts/postremove.sh

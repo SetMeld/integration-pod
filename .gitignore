@@ -1,6 +1,6 @@
 # Node.js bundling artifacts
 vendor
-bundle
+./bundle
 *.deb
 
 node_modules

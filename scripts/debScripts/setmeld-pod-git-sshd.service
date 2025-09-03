@@ -1,7 +1,7 @@
 [Unit]
 Description=SetMeld Pod - Git SSHD
 After=network.target
-Wants=setmeld-pod.target
+PartOf=setmeld-pod.target
 
 [Service]
 User=root

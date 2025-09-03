@@ -15,12 +15,12 @@
     "dev:ui": "cd ui && npm run build:server:watch",
     "start:server": "node ./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -g localhost:2229",
     "build:server": "npm run build:server:ts && npm run build:server:components && npm run build:server:hooks",
+    "build:server:ts": "tsc",
     "build:server:components": "componentsjs-generator -s src -c dist/components -r iss -i .componentsignore",
     "build:server:hooks": "mkdir -p dist/git-hooks && cp src/git-hooks/* dist/git-hooks/",
-    "build:server:ts": "tsc",
     "build:ui": "cd ui && npm install && npm run build:server",
     "build": "npm run build:server && npm run build:ui",
-    "bundle": "npm run build && bash ./scripts/bundle-packages.sh",
+    "bundle": "npm run build && bash ./scripts/bundle/bundle-packages.sh",
     "start:bundle": "bash ./scripts/start-deb.sh"
   },
   "repository": {
