@@ -63,6 +63,14 @@ docker run -d --name setmeld-pod-test-container \
   -p 3000:3000 -p 2222:2222 \
   setmeld-pod-test
 
+# Wait a moment for systemd to fully boot up
+echo "⏳ Waiting for systemd to boot up..."
+sleep 5
+
+# Start the setmeld-pod target
+echo "🚀 Starting setmeld-pod.target..."
+docker exec setmeld-pod-test-container systemctl start setmeld-pod.target
+
 # Cleanup on Ctrl+C
 trap 'echo; echo "🧹 Cleaning up..."; \
       docker rm -f setmeld-pod-test-container >/dev/null 2>&1 || true; \

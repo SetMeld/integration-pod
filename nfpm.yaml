@@ -52,7 +52,7 @@ contents:
   # data dir (ownership set in postinstall after creating user)
   - dst: /var/lib/setmeld/data
     type: dir
-    file_info: { mode: 0755, owner: root, group: root }
+    file_info: { mode: 0755 }
 
   # example env as config
   - src: ./scripts/bundleScripts/config.env.example

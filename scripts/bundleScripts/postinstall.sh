@@ -8,7 +8,6 @@ log "Setting up SetMeld Pod"
 # Create necessary directories
 log "Creating SSH service directories..."
 mkdir -p /etc/setmeld-pod/sshd/hostkeys
-mkdir -p /var/lib/setmeld/data/.internal/integration-git
 
 # Generate SSH host key if it doesn't exist
 if [ ! -f /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key ]; then
@@ -17,10 +16,15 @@ if [ ! -f /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key ]; then
     chmod 600 /etc/setmeld-pod/sshd/hostkeys/ssh_host_ed25519_key
 fi
 
-# Create authorized_keys file with proper permissions
-log "Setting up authorized_keys file..."
+# Create required directories and files as root, then change ownership
+log "Setting up data directory structure..."
+mkdir -p /var/lib/setmeld/data/.internal/integration-git
 touch /var/lib/setmeld/data/.internal/authorized_keys
 chmod 600 /var/lib/setmeld/data/.internal/authorized_keys
+
+# Ensure setmeld user owns everything in the data directory
+chown -R setmeld:setmeld /var/lib/setmeld/data
+chmod -R 755 /var/lib/setmeld/data
 
 # Create sshd_config
 log "Creating SSH configuration..."
@@ -37,7 +41,7 @@ X11Forwarding no
 AuthorizedKeysFile /var/lib/setmeld/data/.internal/authorized_keys
 PidFile /run/setmeld-pod/sshd.pid
 SetEnv GIT_PROJECT_ROOT=/var/lib/setmeld/data/.internal/integration-git
-ForceCommand git-shell -c "\$SSH_ORIGINAL_COMMAND"
+AllowUsers setmeld
 EOF
 
 # Update the port in sshd_config to use GIT_PORT from config.env if available
@@ -57,7 +61,7 @@ log "SSH service setup complete"
 
 # Check if systemd is running as PID 1.
 # This prevents errors in non-systemd environments like Docker.
-if [ -d /run/systemd/system ]; then
+if [ "$(ps -p 1 -o comm=)" = "systemd" ]; then
   echo "Reloading systemd daemon..."
   systemctl daemon-reload
   echo "Enabling and starting setmeld-pod.target..."
