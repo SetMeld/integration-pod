@@ -15,6 +15,8 @@ description: |
 depends:
   - openssh-server
   - git
+  - curl
+  - npm
 
 contents:
   # app payload

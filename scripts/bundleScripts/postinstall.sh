@@ -22,6 +22,9 @@ mkdir -p /var/lib/setmeld/data/.internal/integration-git
 touch /var/lib/setmeld/data/.internal/authorized_keys
 chmod 600 /var/lib/setmeld/data/.internal/authorized_keys
 
+# Set the default git branch to main
+git config --system init.defaultBranch main
+
 # Ensure setmeld user owns everything in the data directory
 chown -R setmeld:setmeld /var/lib/setmeld/data
 chmod -R 755 /var/lib/setmeld/data

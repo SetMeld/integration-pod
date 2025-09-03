@@ -18,22 +18,16 @@ async function installGitHook(
   integrationId: string,
 ): Promise<void> {
   try {
-    const { rootFilePath } = getGlobals();
     const hooksDir = path.join(gitRepoPath, "hooks");
     const hookPath = path.join(hooksDir, "post-receive");
 
     // Determine the source hook path based on environment
-    const isDevMode = process.env.NODE_ENV !== "production";
-    const sourceHookPath = isDevMode
-      ? path.join(rootFilePath, "..", "src", "git-hooks", "post-receive")
-      : path.join(
-          "/usr",
-          "lib",
-          "setmeld-pod",
-          "dist",
-          "git-hooks",
-          "post-receive",
-        );
+    const sourceHookPath = path.join(
+      __dirname,
+      "..",
+      "git-hooks",
+      "post-receive",
+    );
 
     // Check if source hook exists
     try {
