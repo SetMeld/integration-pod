@@ -42,6 +42,7 @@
       apt:
         deb: "/tmp/{{ setmeld_pod_package_name }}"
         state: present
+        dpkg_options: 'force-confold,force-confdef'
     
     - name: Clean up temporary package
       file:
@@ -82,6 +83,14 @@
         dest: /etc/nginx/sites-enabled/setmeld-pod
         state: link
     
+    - name: Ensure nginx log directory exists
+      file:
+        path: /var/log/nginx
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+    
     # Obtain SSL certificate
     - name: Obtain SSL certificate with Certbot
       command: certbot --nginx -d {{ base_url }} --non-interactive --agree-tos --email admin@{{ base_url }} --redirect
@@ -107,7 +116,7 @@
       lineinfile:
         path: /etc/setmeld-pod/config.env
         regexp: '^CSS_BASE_URL='
-        line: 'CSS_BASE_URL={{ "https" if enable_https else "http" }}://{{ base_url }}{{ ":" + nginx_port | string if not enable_https else "" }}/'
+        line: 'CSS_BASE_URL={{ "https" if enable_https else "http" }}://{{ base_url }}/'
         state: present
         backup: yes
     
@@ -118,6 +127,13 @@
         line: 'CSS_GIT_URI=setmeld@{{ base_url }}:2222'
         state: present
         backup: yes
+    
+    # Restart SetMeld Pod service to apply configuration changes
+    - name: Restart SetMeld Pod service
+      systemd:
+        name: setmeld-pod.target
+        state: restarted
+        daemon_reload: yes
     
     # Start and enable services
     - name: Start and enable services

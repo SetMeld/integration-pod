@@ -252,5 +252,8 @@ sudo vim /etc/setmeld-pod/config.env
 systemctl restart setmeld-pod.target
 
 # Logs for the node (CSS) service
-journalctl -u setmeld-pod-node.service
+journalctl -u setmeld-pod-node.service -n 50
+
+# Data Directory
+cd /var/lib/setmeld/data/
 ```
