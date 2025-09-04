@@ -1,0 +1,11 @@
+all:
+  hosts:
+    myserver:
+      ansible_host: sandbox
+      base_url: pod.setmeld.com
+      enable_https: true
+      nginx_port: 443
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_become: yes
+    ansible_become_method: sudo

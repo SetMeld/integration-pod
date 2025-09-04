@@ -48,6 +48,30 @@ After running `npm run dev`, you can:
 - `npm run dev:css` - Start CSS only
 - `npm run dev` - Start both services concurrently
 
+### Version Management
+
+SetMeld Pod uses a centralized version management system. The version is defined in `version.json` and automatically synchronized across all configuration files, including:
+
+- `package.json` - Main package version
+- `nfpm.yaml` - Debian package version
+- `ansible/deploy.yml` - Deployment version
+- `config/*.json` - Linked data dependency URLs (major version only)
+
+The script automatically updates URLs in config files to use the major version with minor/patch set to 0. For example, version `2.4.9-alpha.3` updates URLs to use `^2.0.0`.
+
+- `npm run version:get` - Get current version
+- `npm run version:set <version>` - Set version to specific value (e.g., `1.0.0`, `0.2.0-beta.1`)
+- `npm run version:bump <type>` - Bump version (major|minor|patch|prerelease)
+
+Examples:
+```bash
+npm run version:get                    # Get current version
+npm run version:set 1.0.0              # Set to 1.0.0
+npm run version:set 0.2.0-beta.1       # Set to 0.2.0-beta.1
+npm run version:bump patch             # Bump patch version
+npm run version:bump prerelease        # Bump prerelease version
+```
+
 ## Production Deployment
 
 ### Quick Deployment (Recommended)
@@ -95,7 +119,7 @@ For detailed deployment instructions, see [ansible/README.md](./ansible/README.m
 ```bash
 # Build the Debian package
 npm run bundle
-# => setmeld-pod_0.1.0_amd64.deb
+# => setmeld-pod_0.1.0-alpha.0_amd64.deb
 ```
 
 ### Installation
@@ -240,10 +264,10 @@ Production
 
 ```bash
 # Send the deb to the server
-scp ./bundle/setmeld-pod_0.1.0_amd64.deb jackson@sandbox:~/
+scp ./bundle/setmeld-pod_0.1.0-alpha.0_amd64.deb jackson@sandbox:~/
 
 # Install the deb once it's uplaoded
-sudo apt-get install -y ./setmeld-pod_0.1.0_amd64.deb
+sudo apt-get install -y ./setmeld-pod_0.1.0-alpha.0_amd64.deb
 
 # Edit the configs on the server
 sudo vim /etc/setmeld-pod/config.env

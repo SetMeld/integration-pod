@@ -1,7 +1,7 @@
 name: "setmeld-pod"
 arch: ${ARCH}
 platform: "linux"
-version: "0.1.0"
+version: "1.0.0-alpha.9"
 section: "utils"
 priority: "optional"
 maintainer: "SetMeld Team <jackson@setmeld.com>"
