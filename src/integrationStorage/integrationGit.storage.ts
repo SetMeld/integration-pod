@@ -122,16 +122,7 @@ export function getIntegrationGitPath(integrationId: string): string {
 export function getIntegrationGitSshUrl(integrationId: string): string {
   const { gitUri, integrationGitPath } = getGlobals();
 
-  // Check if we're in development mode by looking for localhost in gitUri
-  const isDevMode = gitUri.includes("localhost");
-
-  if (isDevMode) {
-    // In dev mode, use the full path to the repository
-    return `ssh://${gitUri}${integrationGitPath}/${integrationId}.git`;
-  } else {
-    // In production mode, use just the integration ID
-    return `ssh://${gitUri}/${integrationId}.git`;
-  }
+  return `ssh://${gitUri}${integrationGitPath}/${integrationId}.git`;
 }
 
 /**

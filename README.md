@@ -256,4 +256,6 @@ journalctl -u setmeld-pod-node.service -n 50
 
 # Data Directory
 cd /var/lib/setmeld/data/
+
+# Remember ports 80, 443, and 2222 need to be exposed
 ```
