@@ -8,10 +8,7 @@ import {
 import { getGlobals } from "../../globals";
 import { getIntegrationGitSshUrl } from "../../integrationStorage/integrationGit.storage";
 
-export type UpdateableIntegrationMetaRequest = Pick<
-  IntegrationMeta,
-  "name" | "targetFile"
->;
+export type UpdateableIntegrationMetaRequest = Pick<IntegrationMeta, "name">;
 
 /**
  * Updates an existing integration's meta data
@@ -46,16 +43,6 @@ export const updateIntegrationHandler: RequestHandler = async (req, res) => {
         updateData.name.trim().length === 0
       ) {
         throw new HttpError(400, "Integration name must be a non-empty string");
-      }
-    }
-
-    // Validate targetFile if provided
-    if (updateData.targetFile !== undefined) {
-      if (
-        typeof updateData.targetFile !== "string" ||
-        updateData.targetFile.trim().length === 0
-      ) {
-        throw new HttpError(400, "Target file must be a non-empty string");
       }
     }
 

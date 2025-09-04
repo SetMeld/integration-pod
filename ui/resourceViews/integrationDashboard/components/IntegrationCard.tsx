@@ -39,9 +39,6 @@ export const IntegrationCard: FunctionComponent<{
               <Text className="text-sm text-muted-foreground">
                 Git URL: {integration.gitAddress}
               </Text>
-              <Text className="text-sm text-muted-foreground">
-                Target: {integration.targetFile}
-              </Text>
             </View>
           )}
         </CardContent>

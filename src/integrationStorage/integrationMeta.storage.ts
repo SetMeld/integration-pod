@@ -12,7 +12,6 @@ export type IntegrationStatus =
 export interface IntegrationMeta {
   id: string;
   name: string;
-  targetFile: string;
   status: IntegrationStatus;
   createdAt?: string;
   updatedAt?: string;

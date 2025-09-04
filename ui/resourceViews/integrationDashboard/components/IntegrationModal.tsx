@@ -37,7 +37,6 @@ export function IntegrationModal({
   const deleteIntegration = useDeleteIntegration();
   const { prompt } = useDialog();
   const [name, setName] = useState(integration.name);
-  const [targetUrl, setTargetUrl] = useState(integration.targetFile);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [activeTab, setActiveTab] = useState<"details" | "logs">("details");
@@ -65,7 +64,6 @@ export function IntegrationModal({
     try {
       const updatedIntegration = await updateIntegration(integration.id, {
         name,
-        targetFile: targetUrl,
       });
       onUpdate?.(updatedIntegration);
       onOpenChange(false);
@@ -165,13 +163,6 @@ export function IntegrationModal({
                     value={name}
                     onChangeText={setName}
                     placeholder="Enter integration name"
-                  />
-                  
-                  <Input
-                    label="Target URL"
-                    value={targetUrl}
-                    onChangeText={setTargetUrl}
-                    placeholder="Enter target URL"
                   />
                   
                   <Input

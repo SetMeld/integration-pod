@@ -51,7 +51,6 @@ export const createIntegrationHandler: RequestHandler = async (req, res) => {
     const integrationMeta: IntegrationMeta = {
       id: integrationId,
       name: trimmedName,
-      targetFile: `/integration-data/${integrationId}.ttl`,
       status: { type: "ok" },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
