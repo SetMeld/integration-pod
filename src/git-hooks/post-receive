@@ -6,9 +6,13 @@
 set -euo pipefail
 
 # Configuration
-NODE_APP_HOST="${NODE_APP_HOST:-localhost}"
-NODE_APP_PORT="${NODE_APP_PORT:-3000}"
-API_ENDPOINT="http://${NODE_APP_HOST}:${NODE_APP_PORT}/.integration/api/git-commit-hook"
+CSS_BASE_URL="${CSS_BASE_URL:-http://localhost:3000}"
+# Remove trailing slash if present and add the API endpoint
+API_ENDPOINT="${CSS_BASE_URL%/}/.integration/api/git-commit-hook"
+# Extract host:port from CSS_BASE_URL for headers (remove protocol and trailing slash)
+FORWARDED_HOST="${CSS_BASE_URL#http://}"
+FORWARDED_HOST="${FORWARDED_HOST#https://}"
+FORWARDED_HOST="${FORWARDED_HOST%/}"
 
 # Read the ref information from stdin
 while read oldrev newrev refname; do
@@ -36,7 +40,7 @@ EOF
     if command -v curl >/dev/null 2>&1; then
         curl -X POST "$API_ENDPOINT" \
              -H "Content-Type: application/json" \
-             -H "X-Forwarded-Host: ${NODE_APP_HOST}:${NODE_APP_PORT}" \
+             -H "X-Forwarded-Host: ${FORWARDED_HOST}" \
              -H "X-Forwarded-Proto: http" \
              --connect-timeout 10 \
              --max-time 30 \
