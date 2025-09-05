@@ -1,6 +1,6 @@
 {
   "name": "setmeld-pod",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.3",
   "description": "SetMeld Pod: Community Solid Server + Git over SSH (git-shell)",
   "main": "./dist/index.js",
   "engines": {

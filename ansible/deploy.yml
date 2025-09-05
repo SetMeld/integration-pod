@@ -9,7 +9,7 @@
   tasks:
     - name: Set deployment variables
       set_fact:
-        setmeld_pod_version: "0.0.1-alpha.1"
+        setmeld_pod_version: "0.0.1-alpha.3"
         setmeld_pod_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
     
     - name: Set package name

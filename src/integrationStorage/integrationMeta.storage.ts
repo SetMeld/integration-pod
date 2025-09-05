@@ -3,7 +3,6 @@
 import fs from "fs/promises";
 import path from "path";
 import { getGlobals } from "../globals";
-import { getIntegrationGitSshUrl } from "./integrationGit.storage";
 
 export type IntegrationStatus =
   | { type: "ok" }

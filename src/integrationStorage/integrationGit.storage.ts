@@ -41,8 +41,16 @@ async function installGitHook(
       return;
     }
 
-    // Copy the hook file
-    await fs.copyFile(sourceHookPath, hookPath);
+    // Read the template hook file and replace the placeholder with actual base URL
+    const { baseUrl } = getGlobals();
+    const hookTemplate = await fs.readFile(sourceHookPath, "utf-8");
+    const customizedHook = hookTemplate.replace(
+      "__CSS_BASE_URL_PLACEHOLDER__",
+      baseUrl,
+    );
+
+    // Write the customized hook file
+    await fs.writeFile(hookPath, customizedHook, "utf-8");
 
     // Make it executable
     await fs.chmod(hookPath, 0o755);

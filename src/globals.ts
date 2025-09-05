@@ -1,6 +1,7 @@
 import { Logger } from "./util/logger";
 
 export interface IntegrationPodGlobals {
+  baseUrl: string;
   rootFilePath: string;
   internalDataFilePath: string;
   integrationCodePath: string;
@@ -11,6 +12,7 @@ export interface IntegrationPodGlobals {
 }
 
 const globals: IntegrationPodGlobals = {
+  baseUrl: "",
   rootFilePath: "",
   internalDataFilePath: "",
   integrationCodePath: "",

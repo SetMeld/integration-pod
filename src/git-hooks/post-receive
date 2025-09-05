@@ -6,7 +6,7 @@
 set -euo pipefail
 
 # Configuration
-CSS_BASE_URL="${CSS_BASE_URL:-http://localhost:3000}"
+CSS_BASE_URL="__CSS_BASE_URL_PLACEHOLDER__"
 # Remove trailing slash if present and add the API endpoint
 API_ENDPOINT="${CSS_BASE_URL%/}/.integration/api/git-commit-hook"
 # Extract host:port from CSS_BASE_URL for headers (remove protocol and trailing slash)

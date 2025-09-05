@@ -6,11 +6,14 @@ import type {
 import { createSolidTokenVerifier } from "@solid/access-token-verifier";
 import { HttpError } from "./HttpError";
 import { parseForwarded } from "@solid/community-server";
+import { getGlobals } from "../globals";
 
 const solidOidcAccessTokenVerifier: SolidTokenVerifierFunction =
   createSolidTokenVerifier();
 
-export function createValidateWebId(base: string) {
+export function createValidateWebId() {
+  const { baseUrl } = getGlobals();
+
   const validateWebId: RequestHandler = async (
     request: Request,
     response: Response,
@@ -33,7 +36,7 @@ export function createValidateWebId(base: string) {
       );
 
       // TODO check if WebID is the single right WebId.
-      const expectedWebId = `${base}admin/profile/card#me`;
+      const expectedWebId = `${baseUrl}admin/profile/card#me`;
       if (expectedWebId === webId) {
         next();
       } else {

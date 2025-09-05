@@ -5,23 +5,23 @@ import path from "path";
 import { getGlobals } from "../../../globals";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const SERVER_URL = "http://localhost:3000/.account/";
-const BASE_PATH = "/app/data";
 
 export async function processAccount(
   accountChanges: AccountChanges,
 ): Promise<void> {
-  const { logger } = getGlobals();
+  const { logger, baseUrl, rootFilePath } = getGlobals();
   logger.info("Processing account changes", { accountChanges });
   const { podName, overwrite = false, externalWebId } = accountChanges;
 
   // Step 0: Check if the Pod exists, if it does, don't do anything.
-  if (await fsExists(path.join(BASE_PATH, podName))) {
+  if (await fsExists(path.join(rootFilePath, podName))) {
     return;
   }
 
+  const serverUrl = `${baseUrl}.account/`;
+
   // Step 1: Fetch the controls
-  const controlsResponse = await fetch(SERVER_URL, {
+  const controlsResponse = await fetch(serverUrl, {
     method: "GET",
   });
   const controlsData = (await controlsResponse.json()) as any;
@@ -38,7 +38,7 @@ export async function processAccount(
 
   const authorization = createAccountData.authorization;
 
-  const controlsResponseAuth = await fetch(SERVER_URL, {
+  const controlsResponseAuth = await fetch(serverUrl, {
     headers: { authorization: `CSS-Account-Token ${authorization}` },
   });
   const controlsDataAuth = (await controlsResponseAuth.json()) as any;

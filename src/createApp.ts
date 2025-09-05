@@ -25,6 +25,7 @@ export function createApp(
   const integrationGitPath = path.join(internalDataFilePath, "integration-git");
 
   setGlobals({
+    baseUrl: base,
     rootFilePath,
     gitUri,
     internalDataFilePath,
@@ -38,7 +39,7 @@ export function createApp(
   // Install git hooks for all existing repositories
   installGitHooksForAllRepos();
 
-  const apiRouter = createApiRouter(base);
+  const apiRouter = createApiRouter();
 
   app.use("/.integration/api", apiRouter);
 

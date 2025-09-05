@@ -14,7 +14,7 @@ import { updateIntegrationHandler } from "./integration/updateIntegration.handle
 import { deleteIntegrationHandler } from "./integration/deleteIntegration.handler";
 import { readIntegrationLogsHandler } from "./logs/readIntegrationLogs.handler";
 
-export function createApiRouter(base: string) {
+export function createApiRouter() {
   const apiRouter = express.Router();
 
   /**
@@ -39,7 +39,7 @@ export function createApiRouter(base: string) {
    * AUTHENTICATED FUNCTIONS
    * ===========================================================================
    */
-  apiRouter.use(createValidateWebId(base));
+  apiRouter.use(createValidateWebId());
 
   /**
    * ===========================================================================
