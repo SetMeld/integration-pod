@@ -52,7 +52,7 @@ After running `npm run dev`, you can:
 
 SetMeld Pod uses a centralized version management system. The version is defined in `version.json` and automatically synchronized across all configuration files, including:
 
-- `package.json` - Main package version
+- `package.json` - Main package version and linked data dependency URLs (major version only)
 - `nfpm.yaml` - Debian package version
 - `ansible/deploy.yml` - Deployment version
 - `config/*.json` - Linked data dependency URLs (major version only)

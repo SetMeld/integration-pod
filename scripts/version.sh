@@ -50,9 +50,11 @@ EOF
         major_version="${BASH_REMATCH[1]}"
         local url_version="$major_version.0.0"
         
-        # Update URLs in all config files
+        # Update URLs in all config files and package.json
         find config -name "*.json" -type f -exec sed -i.bak "s|linkedsoftwaredependencies\.org/bundles/npm/setmeld-pod/\^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*|linkedsoftwaredependencies.org/bundles/npm/setmeld-pod/^$url_version|g" {} \;
+        sed -i.bak "s|linkedsoftwaredependencies\.org/bundles/npm/setmeld-pod/\^[0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*|linkedsoftwaredependencies.org/bundles/npm/setmeld-pod/^$url_version|g" package.json
         find config -name "*.json.bak" -type f -delete
+        rm -f package.json.bak
     fi
     
     echo "Version updated to: $new_version"

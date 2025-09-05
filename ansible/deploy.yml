@@ -9,7 +9,7 @@
   tasks:
     - name: Set deployment variables
       set_fact:
-        setmeld_pod_version: "1.0.0-alpha.9"
+        setmeld_pod_version: "0.0.1-alpha.1"
         setmeld_pod_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
     
     - name: Set package name
@@ -152,7 +152,7 @@
         port: "{{ item }}"
         host: 127.0.0.1
         delay: 5
-        timeout: 30
+        timeout: 60
       loop:
         - "{{ nginx_port }}"
         - 3000  # SetMeld Pod web service
