@@ -69,6 +69,12 @@
         path: /etc/nginx/sites-enabled/default
         state: absent
     
+    - name: Check if SSL configuration already exists
+      shell: grep -q "ssl_certificate" /etc/nginx/sites-available/setmeld-pod
+      register: ssl_config_exists
+      ignore_errors: yes
+      when: enable_https | bool
+    
     - name: Configure nginx for SetMeld Pod
       template:
         src: nginx-setmeld-pod.j2
@@ -76,6 +82,7 @@
         owner: root
         group: root
         mode: '0644'
+      when: not (enable_https | bool and ssl_config_exists.rc == 0)
     
     - name: Enable SetMeld Pod nginx site
       file:
@@ -94,8 +101,6 @@
     # Obtain SSL certificate
     - name: Obtain SSL certificate with Certbot
       command: certbot --nginx -d {{ base_url }} --non-interactive --agree-tos --email admin@{{ base_url }} --redirect
-      args:
-        creates: /etc/letsencrypt/live/{{ base_url }}
       when: enable_https | bool
       ignore_errors: yes
       register: certbot_result
