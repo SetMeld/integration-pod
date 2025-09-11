@@ -1,0 +1,16 @@
+[Unit]
+Description=SetMeld Pod - CSS (Node)
+After=network.target
+PartOf=setmeld-pod.target
+
+[Service]
+User=setmeld
+Group=setmeld
+EnvironmentFile=/etc/setmeld-pod/config.env
+WorkingDirectory=/usr/lib/setmeld-pod
+ExecStart=/usr/lib/setmeld-pod/runtime/bin/node ./node_modules/@solid/community-server/bin/server.js
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=setmeld-pod.target

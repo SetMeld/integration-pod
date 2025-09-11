@@ -1,36 +1,42 @@
 {
-  "name": "integration-pod",
-  "version": "1.0.0",
-  "description": "",
+  "name": "setmeld-pod",
+  "version": "0.0.1-alpha.4",
+  "description": "SetMeld Pod: Community Solid Server + Git over SSH (git-shell)",
   "main": "./dist/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm run build:server && npm run build:ui",
-    "docker:dev": "docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build",
-    "docker:prod": "docker compose -f docker-compose.yml up --build",
-    "setup": "bash scripts/setup.sh",
-    "watch": "concurrently \"npm:watch:server\"",
-    "watch:server": "nodemon --watch src --watch config --ext ts,json --exec \"npm run build:server && npm run dev:server\"",
-    "watch:ui": "cd ui && npm run build:server:watch",
-    "build:server": "npm run build:server:ts && npm run build:server:components",
-    "build:server:components": "componentsjs-generator -s src -c dist/components -r iss -i .componentsignore",
+    "dev": "npm run dev:setup && concurrently -k -n server,git,ui \"npm:dev:server\" \"npm:dev:sshd\" \"npm:dev:ui\"",
+    "dev:setup": "bash ./scripts/dev-setup.sh",
+    "dev:sshd": "bash ./scripts/dev-sshd.sh",
+    "dev:server": "nodemon --watch src --watch config --ext ts,json --exec \"npm run build:server && npm run start:server\"",
+    "dev:ui": "cd ui && npm run build:server:watch",
+    "start:server": "node ./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -g localhost:2229",
+    "build:server": "npm run build:server:ts && npm run build:server:components && npm run build:server:hooks",
     "build:server:ts": "tsc",
+    "build:server:components": "componentsjs-generator -s src -c dist/components -r iss -i .componentsignore",
+    "build:server:hooks": "mkdir -p dist/git-hooks && cp src/git-hooks/* dist/git-hooks/",
     "build:ui": "cd ui && npm install && npm run build:server",
-    "dev:ui": "cd ui && npm run dev:server-hosted",
-    "dev:server": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data",
-    "start": "./node_modules/@solid/community-server/bin/server.js -c ./config/config.json -m ./ -f ./data -b ${BASE_URL:-http://localhost:3000}"
+    "build": "npm run build:server && npm run build:ui",
+    "bundle": "npm run build && bash ./scripts/bundle/bundle-packages.sh",
+    "start:bundle": "bash ./scripts/start-deb.sh",
+    "version:get": "bash ./scripts/version.sh get",
+    "version:set": "bash ./scripts/version.sh set",
+    "version:bump": "bash ./scripts/version.sh bump"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SetMeld/integration-pod.git"
+    "url": "git+https://github.com/SetMeld/setmeld-pod.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/SetMeld/integration-pod/issues"
+    "url": "https://github.com/SetMeld/setmeld-pod/issues"
   },
-  "homepage": "https://github.com/SetMeld/integration-pod#readme",
+  "homepage": "https://github.com/SetMeld/setmeld-pod#readme",
   "devDependencies": {
     "@tsconfig/node18": "^18.2.4",
     "@types/express": "^5.0.1",
@@ -59,14 +65,14 @@
     "yup": "^1.6.1"
   },
   "types": "./dist/index.d.ts",
-  "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod",
+  "lsd:module": "https://linkedsoftwaredependencies.org/bundles/npm/setmeld-pod",
   "lsd:components": "dist/components/components.jsonld",
   "lsd:contexts": {
-    "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod/^1.0.0/components/context.jsonld": "dist/components/context.jsonld"
+    "https://linkedsoftwaredependencies.org/bundles/npm/setmeld-pod/^0.0.0/components/context.jsonld": "dist/components/context.jsonld"
   },
   "lsd:importPaths": {
-    "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod/^1.0.0/components/": "dist/components/",
-    "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod/^1.0.0/config/": "config/",
-    "https://linkedsoftwaredependencies.org/bundles/npm/integration-pod/^1.0.0/dist/": "dist/"
+    "https://linkedsoftwaredependencies.org/bundles/npm/setmeld-pod/^0.0.0/components/": "dist/components/",
+    "https://linkedsoftwaredependencies.org/bundles/npm/setmeld-pod/^0.0.0/config/": "config/",
+    "https://linkedsoftwaredependencies.org/bundles/npm/setmeld-pod/^0.0.0/dist/": "dist/"
   }
 }

@@ -5,14 +5,13 @@ export type IntegrationStatus =
 export interface IntegrationInformation {
   id: string;
   name: string;
-  targetFile: string;
   gitAddress: string;
   status: IntegrationStatus;
 }
 
 export type UpdateableIntegrationInformation = Pick<
   IntegrationInformation,
-  "name" | "targetFile"
+  "name"
 >;
 
 export type LogTypes = "deploy" | "trigger" | "integration";

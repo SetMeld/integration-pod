@@ -1,0 +1,177 @@
+---
+- name: Deploy SetMeld Pod
+  hosts: all
+  become: yes
+  gather_facts: yes
+  
+
+  
+  tasks:
+    - name: Set deployment variables
+      set_fact:
+        setmeld_pod_version: "0.0.1-alpha.4"
+        setmeld_pod_architecture: "{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
+    
+    - name: Set package name
+      set_fact:
+        setmeld_pod_package_name: "setmeld-pod_{{ setmeld_pod_version }}_{{ setmeld_pod_architecture }}.deb"
+    
+    - name: Display deployment info
+      debug:
+        msg: |
+          Deploying SetMeld Pod:
+          - Server: {{ inventory_hostname }}
+          - Base URL: {{ base_url }}
+          - Port: {{ nginx_port }}
+          - HTTPS: {{ enable_https }}
+          - Package: {{ setmeld_pod_package_name }}
+    
+    # Install packages
+    - name: Update package cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+    
+    - name: Copy SetMeld Pod package to server
+      copy:
+        src: "../bundle/{{ setmeld_pod_package_name }}"
+        dest: "/tmp/{{ setmeld_pod_package_name }}"
+        mode: '0644'
+    
+    - name: Install SetMeld Pod package
+      apt:
+        deb: "/tmp/{{ setmeld_pod_package_name }}"
+        state: present
+        dpkg_options: 'force-confold,force-confdef'
+    
+    - name: Clean up temporary package
+      file:
+        path: "/tmp/{{ setmeld_pod_package_name }}"
+        state: absent
+    
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+    
+    # SSL setup with Certbot
+    - name: Install Certbot and Nginx plugin
+      apt:
+        name: 
+          - certbot
+          - python3-certbot-nginx
+        state: present
+      when: enable_https | bool
+    
+    # Configure nginx
+    - name: Remove default nginx site
+      file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+    
+    - name: Check if SSL configuration already exists
+      shell: grep -q "ssl_certificate" /etc/nginx/sites-available/setmeld-pod
+      register: ssl_config_exists
+      ignore_errors: yes
+      when: enable_https | bool
+    
+    - name: Configure nginx for SetMeld Pod
+      template:
+        src: nginx-setmeld-pod.j2
+        dest: /etc/nginx/sites-available/setmeld-pod
+        owner: root
+        group: root
+        mode: '0644'
+      when: not (enable_https | bool and ssl_config_exists.rc == 0)
+    
+    - name: Enable SetMeld Pod nginx site
+      file:
+        src: /etc/nginx/sites-available/setmeld-pod
+        dest: /etc/nginx/sites-enabled/setmeld-pod
+        state: link
+    
+    - name: Ensure nginx log directory exists
+      file:
+        path: /var/log/nginx
+        state: directory
+        owner: www-data
+        group: www-data
+        mode: '0755'
+    
+    # Obtain SSL certificate
+    - name: Obtain SSL certificate with Certbot
+      command: certbot --nginx -d {{ base_url }} --non-interactive --agree-tos --email admin@{{ base_url }} --redirect
+      when: enable_https | bool
+      ignore_errors: yes
+      register: certbot_result
+    
+    # Handle Certbot results
+    - name: Display Certbot status
+      debug:
+        msg: "SSL certificate acquisition {{ 'succeeded' if certbot_result.rc == 0 else 'failed' }}"
+      when: enable_https | bool
+    
+    - name: Show Certbot error details if failed
+      debug:
+        msg: "Certbot error: {{ certbot_result.stderr_lines | default('Unknown error') }}"
+      when: enable_https | bool and certbot_result.rc != 0
+    
+    # Update SetMeld Pod configuration
+    - name: Update CSS_BASE_URL in config.env
+      lineinfile:
+        path: /etc/setmeld-pod/config.env
+        regexp: '^CSS_BASE_URL='
+        line: 'CSS_BASE_URL={{ "https" if enable_https else "http" }}://{{ base_url }}/'
+        state: present
+        backup: yes
+    
+    - name: Update CSS_GIT_URI in config.env
+      lineinfile:
+        path: /etc/setmeld-pod/config.env
+        regexp: '^CSS_GIT_URI='
+        line: 'CSS_GIT_URI=setmeld@{{ base_url }}:2222'
+        state: present
+        backup: yes
+    
+    # Restart SetMeld Pod service to apply configuration changes
+    - name: Restart SetMeld Pod service
+      systemd:
+        name: setmeld-pod.target
+        state: restarted
+        daemon_reload: yes
+    
+    # Start and enable services
+    - name: Start and enable services
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+        daemon_reload: yes
+      loop:
+        - setmeld-pod.target
+        - nginx
+    
+    # Verify deployment
+    - name: Wait for services to be ready
+      wait_for:
+        port: "{{ item }}"
+        host: 127.0.0.1
+        delay: 5
+        timeout: 60
+      loop:
+        - "{{ nginx_port }}"
+        - 3000  # SetMeld Pod web service
+        - 2222  # Git SSH service
+    
+    - name: Display success message
+      debug:
+        msg: |
+          🎉 SetMeld Pod deployment completed successfully!
+          
+          🌐 Web Interface: {{ 'https' if enable_https else 'http' }}://{{ base_url }}{{ ":" + nginx_port | string if not enable_https else "" }}
+          🔑 Git Operations: ssh://setmeld@{{ base_url }}:2222/path/to/repo
+          
+          Next steps:
+          1. Add SSH keys to /var/lib/setmeld/data/.internal/authorized_keys
+          2. Test web interface access
+          3. Test git operations

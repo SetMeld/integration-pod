@@ -1,7 +1,10 @@
 {
-  "name": "integration-pod-linked-data-browser",
+  "name": "setmeld-pod-linked-data-browser",
   "main": "index.js",
   "version": "0.0.0",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev:ios": "expo start -c --ios",
     "dev:web": "concurrently \"npm run solid-server\" \"expo start -c --web\"",
@@ -17,7 +20,7 @@
   },
   "dependencies": {
     "expo": "^53.0.9",
-    "linked-data-browser": "^0.0.6",
+    "linked-data-browser": "^0.0.7",
     "lucide-react-native": "^0.511.0",
     "nativewind": "^4.1.23",
     "react": "19.0.0",

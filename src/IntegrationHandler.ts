@@ -1,21 +1,19 @@
 import { HttpHandler, HttpHandlerInput } from "@solid/community-server";
 import { Express, response } from "express";
+import { getLoggerFor } from "global-logger-factory";
 import { createApp } from "./createApp";
-
-export interface IntegrationHandlerArgs {
-  baseUrl?: string;
-}
 
 /**
  * Handles any request to a integration route
  */
 export class IntegrationHandler extends HttpHandler {
   private app: Express;
+  protected readonly logger = getLoggerFor(this);
 
-  constructor(baseUrl: string, rootFilePath: string) {
+  constructor(baseUrl: string, rootFilePath: string, gitUri: string) {
     super();
 
-    this.app = createApp(baseUrl, rootFilePath);
+    this.app = createApp(baseUrl, rootFilePath, gitUri);
   }
 
   async handle(input: HttpHandlerInput): Promise<void> {

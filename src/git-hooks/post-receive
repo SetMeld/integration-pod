@@ -1,0 +1,58 @@
+#!/bin/bash
+# Git post-receive hook for SetMeld Pod
+# This hook is triggered when code is pushed to the integration-git repository
+# It sends a request to the postCommit API endpoint
+
+set -euo pipefail
+
+# Configuration
+CSS_BASE_URL="__CSS_BASE_URL_PLACEHOLDER__"
+# Remove trailing slash if present and add the API endpoint
+API_ENDPOINT="${CSS_BASE_URL%/}/.integration/api/git-commit-hook"
+# Extract host:port from CSS_BASE_URL for headers (remove protocol and trailing slash)
+FORWARDED_HOST="${CSS_BASE_URL#http://}"
+FORWARDED_HOST="${FORWARDED_HOST#https://}"
+FORWARDED_HOST="${FORWARDED_HOST%/}"
+
+# Read the ref information from stdin
+while read oldrev newrev refname; do
+    # Skip if this is a delete operation (newrev is all zeros)
+    if [ "$newrev" = "0000000000000000000000000000000000000000" ]; then
+        continue
+    fi
+    
+    # Get the repository path (current working directory should be the git repo)
+    repo_path="$PWD"
+    
+    # Prepare the JSON payload
+    json_payload=$(cat <<EOF
+{
+    "repo": "$repo_path",
+    "ref": "$refname",
+    "oldrev": "$oldrev",
+    "newrev": "$newrev"
+}
+EOF
+)
+    
+    # Send the HTTP request to the postCommit endpoint
+    # Use curl with timeout and retry logic
+    if command -v curl >/dev/null 2>&1; then
+        curl -X POST "$API_ENDPOINT" \
+             -H "Content-Type: application/json" \
+             -H "X-Forwarded-Host: ${FORWARDED_HOST}" \
+             -H "X-Forwarded-Proto: http" \
+             --connect-timeout 10 \
+             --max-time 30 \
+             --retry 2 \
+             --retry-delay 1 \
+             --data "$json_payload" \
+             --silent \
+             --show-error || {
+            echo "Warning: Failed to notify postCommit endpoint at $API_ENDPOINT" >&2
+        }
+    else
+        echo "Warning: curl not available, cannot notify postCommit endpoint" >&2
+    fi
+done
+

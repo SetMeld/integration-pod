@@ -4,9 +4,17 @@ import bodyParser from "body-parser";
 import { HttpError } from "./HttpError";
 import fs from "fs/promises";
 import { postCommitHandler } from "./postCommit/postCommit.handler";
-import { triggers } from "../triggers/triggers";
+import { triggers } from "../integration/triggers/triggers";
+import { getGlobals } from "../globals";
+import path from "path";
+import { createIntegrationHandler } from "./integration/createIntegration.handler";
+import { readIntegrationsHandler } from "./integration/readIntegrations.handler";
+import { readIntegrationHandler } from "./integration/readIntegration.handler";
+import { updateIntegrationHandler } from "./integration/updateIntegration.handler";
+import { deleteIntegrationHandler } from "./integration/deleteIntegration.handler";
+import { readIntegrationLogsHandler } from "./logs/readIntegrationLogs.handler";
 
-export function createApiRouter(base: string) {
+export function createApiRouter() {
   const apiRouter = express.Router();
 
   /**
@@ -31,96 +39,39 @@ export function createApiRouter(base: string) {
    * AUTHENTICATED FUNCTIONS
    * ===========================================================================
    */
-  apiRouter.use(createValidateWebId(base));
+  apiRouter.use(createValidateWebId());
 
   /**
    * ===========================================================================
    * ITEGRATION FUNCTIONS
    * ===========================================================================
    */
-  apiRouter.get("/integration", (req, res) => {
-    res.json([
-      {
-        id: "1",
-        name: "Salesforce Integration",
-        targetFile: "/integration-data/1.ttl",
-        gitAddress: "ssh://localhost:2222/srv/git/1.git",
-        status: {
-          type: "ok",
-        },
-      },
-      {
-        id: "2",
-        name: "Custom SQL Integration",
-        targetFile: "/integration-data/2.ttl",
-        gitAddress: "ssh://localhost:2222/srv/git/2.git",
-        status: {
-          type: "ok",
-        },
-      },
-    ]);
-  });
+  apiRouter.get("/integration", readIntegrationsHandler);
 
-  apiRouter.post("/integration", (req, res) => {
-    res.json({
-      id: "6",
-      name: "Some Name",
-      targetFile: "/integration-data/6.ttl",
-      gitAddress: "ssh://localhost:2222/srv/git/6.git",
-      status: {
-        type: "ok",
-      },
-    });
-  });
+  apiRouter.post("/integration", bodyParser.json(), createIntegrationHandler);
 
-  apiRouter.get("/integration/:id", (req, res) => {
-    res.json({
-      id: "2",
-      name: "Custom SQL Integration",
-      targetFile: "/integration-data/2.ttl",
-      gitAddress: "ssh://localhost:2222/srv/git/2.git",
-      status: {
-        type: "ok",
-      },
-    });
-  });
+  apiRouter.get("/integration/:id", readIntegrationHandler);
 
-  apiRouter.put("/integration/:id", (req, res) => {
-    res.json({
-      id: "1",
-      name: "Some Integration",
-      targetFile: "/integration-data/1.ttl",
-      gitAddress: "ssh://localhost:2222/srv/git/1.git",
-      status: {
-        type: "ok",
-      },
-    });
-  });
+  apiRouter.put(
+    "/integration/:id",
+    bodyParser.json(),
+    updateIntegrationHandler,
+  );
+
+  apiRouter.delete("/integration/:id", deleteIntegrationHandler);
 
   /**
    * ===========================================================================
    * LOGS
    * ===========================================================================
    */
-  apiRouter.get("/integration/:id/log/deploy", (req, res) => {
-    res.send("These are deploy logs.");
-  });
-
-  apiRouter.get("/integration/:id/log/trigger", (req, res) => {
-    res.send("These are trigger logs");
-  });
-
-  apiRouter.get("/integration/:id/log/integration", (req, res) => {
-    res.send("These are integration logs");
-  });
+  apiRouter.get("/integration/:id/log", readIntegrationLogsHandler);
 
   /**
    * ===========================================================================
    * GIT SSH KEY
    * ===========================================================================
    */
-  const AUTHORIZED_KEYS_PATH = "/authorized_keys";
-
   apiRouter.post("/git-ssh-key", bodyParser.json(), async (req, res) => {
     const { sshKey } = req.body;
 
@@ -131,7 +82,13 @@ export function createApiRouter(base: string) {
 
     const entry = `${sshKey.trim()}\n`;
 
-    await fs.writeFile(AUTHORIZED_KEYS_PATH, entry, { mode: 0o600 });
+    const { internalDataFilePath } = getGlobals();
+    const authorizedKeysPath = path.join(
+      internalDataFilePath,
+      "authorized_keys",
+    );
+
+    await fs.writeFile(authorizedKeysPath, entry, { mode: 0o600 });
     res.json({ success: true });
   });
 
@@ -142,8 +99,9 @@ export function createApiRouter(base: string) {
    */
   apiRouter.use(
     (err: unknown, req: Request, res: Response, _next: NextFunction) => {
+      const { logger } = getGlobals();
       if (err instanceof Error) {
-        console.error(err);
+        logger.error("API Error", { error: err.message, stack: err.stack });
       }
       const error = HttpError.from(err);
       res.status(error.status).send(error.message);

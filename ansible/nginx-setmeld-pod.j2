@@ -1,0 +1,126 @@
+{% if enable_https | bool %}
+# Initial HTTP-only configuration for SSL certificate acquisition
+# This will be automatically updated by Certbot after certificates are obtained
+
+# HTTP server block for the specified domain
+server {
+    listen 0.0.0.0:80;
+    listen [::]:80;
+    server_name {{ base_url }};
+    server_tokens off;
+    
+    access_log /var/log/nginx/setmeld_access.log;
+    error_log /var/log/nginx/setmeld_error.log;
+    
+    # Proxy to SetMeld Pod web interface
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        
+        gzip off;
+        proxy_redirect off;
+        
+        # Some requests take more than 30 seconds
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+        
+        proxy_http_version 1.1;
+        
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# Catch-all HTTP server block for any other hostnames/IPs
+server {
+    listen 0.0.0.0:80 default_server;
+    listen [::]:80 default_server;
+    server_name _;
+    server_tokens off;
+    
+    access_log /var/log/nginx/setmeld_access.log;
+    error_log /var/log/nginx/setmeld_error.log;
+    
+    # Proxy to SetMeld Pod web interface
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        
+        gzip off;
+        proxy_redirect off;
+        
+        # Some requests take more than 30 seconds
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+        
+        proxy_http_version 1.1;
+        
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+}
+
+{% else %}
+# HTTP server block for the specified domain
+server {
+    listen 0.0.0.0:{{ nginx_port }};
+    listen [::]:{{ nginx_port }};
+    server_name {{ base_url }};
+    server_tokens off;
+    
+    access_log /var/log/nginx/setmeld_access.log;
+    error_log /var/log/nginx/setmeld_error.log;
+    
+    # Proxy to SetMeld Pod web interface
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        
+        gzip off;
+        proxy_redirect off;
+        
+        # Some requests take more than 30 seconds
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+        
+        proxy_http_version 1.1;
+        
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# Catch-all HTTP server block for any other hostnames/IPs
+server {
+    listen 0.0.0.0:{{ nginx_port }} default_server;
+    listen [::]:{{ nginx_port }} default_server;
+    server_name _;
+    server_tokens off;
+    
+    access_log /var/log/nginx/setmeld_access.log;
+    error_log /var/log/nginx/setmeld_error.log;
+    
+    # Proxy to SetMeld Pod web interface
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        
+        gzip off;
+        proxy_redirect off;
+        
+        # Some requests take more than 30 seconds
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+        
+        proxy_http_version 1.1;
+        
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+{% endif %}

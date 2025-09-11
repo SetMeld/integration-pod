@@ -1,6 +1,12 @@
+# Node.js bundling artifacts
+vendor
+./bundle
+*.deb
+
 node_modules
 dist
 data
 old-data
 infra/hosts
 infra/secrets.yml
+dev/

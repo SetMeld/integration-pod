@@ -1,10 +1,16 @@
 import express, { Express } from "express";
 import { createApiRouter } from "./api/apiRouter";
 import path from "path";
-import { loadAllTriggers } from "./triggers/loadAllTriggers";
+import { loadAllTriggers } from "./integration/triggers/loadAllTriggers";
 import { setGlobals } from "./globals";
+import { ensureIntegrationFolder } from "./integrationStorage/integrationRoute.storage";
+import { installGitHooksForAllRepos } from "./integrationStorage/integrationGit.storage";
 
-export function createApp(base: string, rootFilePath: string): Express {
+export function createApp(
+  base: string,
+  rootFilePath: string,
+  gitUri: string,
+): Express {
   const app = express();
 
   const internalDataFilePath = path.join(rootFilePath, ".internal");
@@ -12,25 +18,32 @@ export function createApp(base: string, rootFilePath: string): Express {
     internalDataFilePath,
     "integration-code",
   );
+  const integrationMetaPath = path.join(
+    internalDataFilePath,
+    "integration-meta",
+  );
+  const integrationGitPath = path.join(internalDataFilePath, "integration-git");
 
   setGlobals({
+    baseUrl: base,
     rootFilePath,
+    gitUri,
     internalDataFilePath,
     integrationCodePath,
+    integrationMetaPath,
+    integrationGitPath,
   });
 
-  const apiRouter = createApiRouter(base);
+  ensureIntegrationFolder();
+
+  // Install git hooks for all existing repositories
+  installGitHooksForAllRepos();
+
+  const apiRouter = createApiRouter();
 
   app.use("/.integration/api", apiRouter);
 
-  const uiPath = path.resolve(__dirname, "ui");
-  app.use("/.integration", express.static(uiPath));
-
-  app.get(new RegExp("^/\\.integration/.*"), (req, res) => {
-    res.sendFile(path.join(uiPath, "index.html"));
-  });
-
-  loadAllTriggers(internalDataFilePath);
+  loadAllTriggers();
 
   return app;
 }
