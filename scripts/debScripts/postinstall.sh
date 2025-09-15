@@ -29,6 +29,10 @@ git config --system init.defaultBranch main
 chown -R setmeld:setmeld /var/lib/setmeld/data
 chmod -R 755 /var/lib/setmeld/data
 
+# Fix authorized_keys permissions - needs to be readable by SSH daemon (root)
+chown setmeld:setmeld /var/lib/setmeld/data/.internal/authorized_keys
+chmod 600 /var/lib/setmeld/data/.internal/authorized_keys
+
 # Create sshd_config
 log "Creating SSH configuration..."
 cat > /etc/setmeld-pod/sshd/sshd_config <<EOF
@@ -44,6 +48,7 @@ X11Forwarding no
 AuthorizedKeysFile /var/lib/setmeld/data/.internal/authorized_keys
 PidFile /run/setmeld-pod/sshd.pid
 SetEnv GIT_PROJECT_ROOT=/var/lib/setmeld/data/.internal/integration-git
+ForceCommand git-shell -c "\$SSH_ORIGINAL_COMMAND"
 AllowUsers setmeld
 EOF
 
