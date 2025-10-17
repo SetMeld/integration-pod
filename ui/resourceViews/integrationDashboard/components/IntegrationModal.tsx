@@ -2,21 +2,10 @@ import React, { useState } from "react";
 import { IntegrationInformation } from "../../../../common/IntegrationInformation";
 import { useUpdateIntegration } from "../api/useUpdateIntegration";
 import { useDeleteIntegration } from "../api/useDeleteIntegration";
-import { useDialog } from "~/components/nav/DialogProvider";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Badge } from "~/components/ui/badge";
-import { View, ScrollView } from "react-native";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
-import { Text } from "~/components/ui/text";
+import { Badge, Button, Card, CardContent, CardHeader, Input, Text, useDialog } from "linked-data-browser";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "linked-data-browser";
 import { IntegrationLogsViewer } from "./IntegrationLogsViewer";
+import { ScrollView, View } from "react-native";
 
 interface IntegrationModalProps {
   integration: IntegrationInformation;
@@ -80,7 +69,7 @@ export function IntegrationModal({
       `Are you sure you want to delete "${integration.name}"?`,
       "Type 'DELETE' to confirm"
     );
-    
+
     // Only proceed if user typed 'DELETE'
     if (confirmed !== "DELETE") {
       return;
@@ -123,64 +112,64 @@ export function IntegrationModal({
           />
         </View>
 
-                <ScrollView className="flex-1 -mx-8" showsVerticalScrollIndicator={true} contentContainerStyle={{ flexGrow: 1, minHeight: '100%' }}>
+        <ScrollView className="flex-1 -mx-8" showsVerticalScrollIndicator={true} contentContainerStyle={{ flexGrow: 1, minHeight: '100%' }}>
           <View className="px-8">
             {activeTab === "details" && (
               <View className="space-y-6">
-              {/* Integration Status Section */}
-              <Card className="border-border">
-                <CardHeader className="pb-4">
-                  <Text className="text-base font-medium text-card-foreground">
-                    Integration Status
-                  </Text>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <View className="flex flex-row items-center gap-3">
-                    <Badge variant={integration.status.type === "ok" ? "default" : "destructive"}>
-                      <Text className="text-sm font-medium">
-                        {integration.status.type}
-                      </Text>
-                    </Badge>
-                  </View>
-                  {integration.status.type === "error" && (
-                    <Text className="text-sm text-destructive leading-relaxed">
-                      {integration.status.message}
+                {/* Integration Status Section */}
+                <Card className="border-border">
+                  <CardHeader className="pb-4">
+                    <Text className="text-base font-medium text-card-foreground">
+                      Integration Status
                     </Text>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <View className="flex flex-row items-center gap-3">
+                      <Badge variant={integration.status.type === "ok" ? "default" : "destructive"}>
+                        <Text className="text-sm font-medium">
+                          {integration.status.type}
+                        </Text>
+                      </Badge>
+                    </View>
+                    {integration.status.type === "error" && (
+                      <Text className="text-sm text-destructive leading-relaxed">
+                        {integration.status.message}
+                      </Text>
+                    )}
+                  </CardContent>
+                </Card>
 
-              {/* Integration Information Section */}
-              <Card className="border-border">
-                <CardHeader className="pb-4">
-                  <Text className="text-base font-medium text-card-foreground">
-                    Integration Information
-                  </Text>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Input
-                    label="Integration Name"
-                    value={name}
-                    onChangeText={setName}
-                    placeholder="Enter integration name"
-                  />
-                  
-                  <Input
-                    label="Git URL"
-                    value={integration.gitAddress}
-                    editable={false}
-                    buttonRight={{
-                      text: "Copy",
-                      onPress: handleCopyGitUrl,
-                      variant: "outline",
-                    }}
-                  />
-                </CardContent>
-              </Card>
-            </View>
-          )}
+                {/* Integration Information Section */}
+                <Card className="border-border">
+                  <CardHeader className="pb-4">
+                    <Text className="text-base font-medium text-card-foreground">
+                      Integration Information
+                    </Text>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <Input
+                      label="Integration Name"
+                      value={name}
+                      onChangeText={setName}
+                      placeholder="Enter integration name"
+                    />
 
-                                  {activeTab === "logs" && (
+                    <Input
+                      label="Git URL"
+                      value={integration.gitAddress}
+                      editable={false}
+                      buttonRight={{
+                        text: "Copy",
+                        onPress: handleCopyGitUrl,
+                        variant: "outline",
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              </View>
+            )}
+
+            {activeTab === "logs" && (
               <View className="space-y-6">
                 <IntegrationLogsViewer integrationId={integration.id} />
               </View>

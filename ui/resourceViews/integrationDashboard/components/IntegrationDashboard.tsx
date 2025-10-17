@@ -3,12 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 import { IntegrationInformation } from "../../../../common/IntegrationInformation";
 import { IntegrationCard } from "./IntegrationCard";
 import { IntegrationModal } from "./IntegrationModal";
-import { Button } from "~/components/ui/button";
 import { useCreateIntegration } from "../api/useCreateIntegration";
 import { useSetGitSshKey } from "../api/useSetGitSshKey";
-import { useDialog } from "~/components/nav/DialogProvider";
 import { View } from "react-native";
-import { Text } from "~/components/ui/text";
+import { Button, useDialog } from "linked-data-browser";
+import { Text } from "lucide-react-native";
 
 export function IntegrationDashboard() {
   const getIntegrations = useGetIntegrations();
@@ -91,14 +90,14 @@ export function IntegrationDashboard() {
         <View className="flex-row flex-wrap gap-4 justify-start max-w-7xl mx-auto">
           {integrations.map((integration) => (
             <View key={integration.id} className="w-[280px]">
-              <IntegrationCard 
+              <IntegrationCard
                 integration={integration}
                 onPress={() => handleCardPress(integration)}
               />
             </View>
           ))}
         </View>
-        
+
         {integrations.length === 0 && (
           <View className="flex-1 items-center justify-center py-16">
             <Text className="text-lg text-muted-foreground text-center">

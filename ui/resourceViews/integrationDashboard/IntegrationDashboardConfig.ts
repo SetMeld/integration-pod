@@ -1,6 +1,6 @@
 
-import { ResourceViewConfig } from "~/components/ResourceView";
-import { LayoutDashboard } from "../../common/icons/LayoutDashboard";
+import { ResourceViewConfig } from "linked-data-browser";
+import { LayoutDashboard } from "lucide-react-native";
 import { IntegrationDashboardView } from "./IntegrationDashboardView";
 
 

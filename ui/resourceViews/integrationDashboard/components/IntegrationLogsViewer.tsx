@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, ScrollView } from "react-native";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
-import { Text } from "~/components/ui/text";
-import { Button } from "~/components/ui/button";
-import { Badge } from "~/components/ui/badge";
 import { useGetIntegrationLogs, type IntegrationLog, type LogQueryOptions } from "../api/useGetIntegrationLogs";
+import { Card, CardContent, CardHeader, Text, Button, Badge } from "linked-data-browser";
 
 interface IntegrationLogsViewerProps {
   integrationId: string;
@@ -37,17 +34,17 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
       setLoading(true);
     }
     setError(null);
-    
+
     try {
       const response = await getLogs(integrationId, { ...filters, ...options });
-      
+
       if (append) {
         // Append older logs to the end
         setLogs(prevLogs => [...prevLogs, ...response.logs]);
       } else {
         setLogs(response.logs);
       }
-      
+
       setPagination(response.pagination);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load logs");
@@ -144,7 +141,7 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
               />
             ))}
           </View>
-          
+
           <View className="flex flex-row items-center gap-2">
             <Text className="text-sm font-medium">Level:</Text>
             <Button
@@ -216,17 +213,17 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
                     <Text className="text-xs text-muted-foreground min-w-[140px] font-mono">
                       {formatTimestamp(log.timestamp)}
                     </Text>
-                    
+
                     {/* Level Badge */}
                     <Badge variant={getLevelColor(log.level)} className="min-w-[50px] justify-center">
                       <Text className="text-xs font-medium">{log.level.toUpperCase()}</Text>
                     </Badge>
-                    
+
                     {/* Category Badge */}
                     <Badge variant={getCategoryColor(log.category)} className="min-w-[80px] justify-center">
                       <Text className="text-xs font-medium">{log.category}</Text>
                     </Badge>
-                    
+
                     {/* Message */}
                     <View className="flex-1 min-w-0">
                       <Text className="text-sm font-mono leading-relaxed break-words">
@@ -245,18 +242,18 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
                 ))}
               </View>
             )}
-                      </ScrollView>
-            
-            {/* Scroll to Bottom Button */}
-            <View className="absolute bottom-4 right-4">
-              <Button
-                variant="outline"
-                text="↓"
-                onPress={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-                className="h-8 w-8 p-0 rounded-full"
-              />
-            </View>
+          </ScrollView>
+
+          {/* Scroll to Bottom Button */}
+          <View className="absolute bottom-4 right-4">
+            <Button
+              variant="outline"
+              text="↓"
+              onPress={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+              className="h-8 w-8 p-0 rounded-full"
+            />
           </View>
+        </View>
 
 
       </CardContent>

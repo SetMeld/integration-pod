@@ -1,10 +1,8 @@
 import React, { FunctionComponent, use, useEffect } from 'react';
 import { View } from 'react-native';
-import { Text } from "~/components/ui/text";
-import { Button } from '~/components/ui/button';
+import { Text, Button, useTargetResource } from "linked-data-browser";
 import { useSolidAuth, useRootContainerFor } from '@ldo/solid-react';
 import { SolidContainerUri } from '@ldo/connected-solid';
-import { useTargetResource } from '~/components/TargetResourceProvider';
 
 const DEFAULT_ISSUER = window.location.origin;
 

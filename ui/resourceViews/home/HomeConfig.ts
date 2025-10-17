@@ -1,5 +1,5 @@
 
-import { ResourceViewConfig } from "~/components/ResourceView";
+import { ResourceViewConfig } from "linked-data-browser";
 import { Home } from "lucide-react-native";
 import { HomeView } from "./HomeView";
 

@@ -1,9 +1,7 @@
 import { FunctionComponent } from "react";
 import { IntegrationInformation } from "../../../../common/IntegrationInformation";
-import { Badge } from "~/components/ui/badge";
 import { TouchableOpacity, View } from "react-native";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
-import { Text } from "~/components/ui/text";
+import { Card, CardHeader, Badge, Text, CardContent } from "linked-data-browser";
 
 export const IntegrationCard: FunctionComponent<{
   integration: IntegrationInformation;
@@ -19,7 +17,7 @@ export const IntegrationCard: FunctionComponent<{
                 {integration.name}
               </Text>
             </View>
-            <Badge 
+            <Badge
               variant={integration.status.type === "ok" ? "default" : "destructive"}
               className="shrink-0"
             >
