@@ -3,12 +3,10 @@ import { useCallback, useEffect, useState } from "react";
 import { IntegrationInformation } from "../../../../common/IntegrationInformation";
 import { IntegrationCard } from "./IntegrationCard";
 import { IntegrationModal } from "./IntegrationModal";
-import { Button } from "~/components/ui/button";
 import { useCreateIntegration } from "../api/useCreateIntegration";
 import { useSetGitSshKey } from "../api/useSetGitSshKey";
-import { useDialog } from "~/components/nav/DialogProvider";
-import { View } from "react-native";
-import { Text } from "~/components/ui/text";
+import { View, StyleSheet, Text } from "react-native";
+import { Button, useDialog } from "linked-data-browser";
 
 export function IntegrationDashboard() {
   const getIntegrations = useGetIntegrations();
@@ -67,41 +65,41 @@ export function IntegrationDashboard() {
   }, []);
 
   return (
-    <View className="flex-1 bg-background">
+    <View style={styles.container}>
       {/* Header Panel with buttons */}
-      <View className="bg-card border-b border-border p-6">
-        <View className="flex flex-row gap-4 max-w-2xl mx-auto">
+      <View style={styles.header}>
+        <View style={styles.buttonRow}>
           <Button
             onPress={onNewIntegration}
             text="New Integration"
             variant="default"
-            className="flex-1"
+            style={styles.button}
           />
           <Button
             onPress={onSetSshKey}
             text="Set SSH Key"
             variant="secondary"
-            className="flex-1"
+            style={styles.button}
           />
         </View>
       </View>
 
       {/* Integration cards grid */}
-      <View className="flex-1 p-6">
-        <View className="flex-row flex-wrap gap-4 justify-start max-w-7xl mx-auto">
+      <View style={styles.content}>
+        <View style={styles.cardsGrid}>
           {integrations.map((integration) => (
-            <View key={integration.id} className="w-[280px]">
-              <IntegrationCard 
+            <View key={integration.id} style={styles.cardWrapper}>
+              <IntegrationCard
                 integration={integration}
                 onPress={() => handleCardPress(integration)}
               />
             </View>
           ))}
         </View>
-        
+
         {integrations.length === 0 && (
-          <View className="flex-1 items-center justify-center py-16">
-            <Text className="text-lg text-muted-foreground text-center">
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>
               No integrations yet. Create your first integration to get started.
             </Text>
           </View>
@@ -121,3 +119,47 @@ export function IntegrationDashboard() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  header: {
+    borderBottomWidth: 1,
+    padding: 24,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 16,
+    maxWidth: 672,
+    marginHorizontal: 'auto',
+  },
+  button: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    padding: 24,
+  },
+  cardsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+    justifyContent: 'flex-start',
+    maxWidth: 1280,
+    marginHorizontal: 'auto',
+  },
+  cardWrapper: {
+    width: 280,
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 64,
+  },
+  emptyText: {
+    fontSize: 18,
+    textAlign: 'center',
+  },
+});

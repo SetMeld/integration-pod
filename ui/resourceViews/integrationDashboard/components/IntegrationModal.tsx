@@ -2,21 +2,10 @@ import React, { useState } from "react";
 import { IntegrationInformation } from "../../../../common/IntegrationInformation";
 import { useUpdateIntegration } from "../api/useUpdateIntegration";
 import { useDeleteIntegration } from "../api/useDeleteIntegration";
-import { useDialog } from "~/components/nav/DialogProvider";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "~/components/ui/dialog";
-import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
-import { Badge } from "~/components/ui/badge";
-import { View, ScrollView } from "react-native";
-import { Card, CardContent, CardHeader } from "~/components/ui/card";
-import { Text } from "~/components/ui/text";
+import { Badge, Button, Card, CardContent, CardHeader, Input, Text, useDialog } from "linked-data-browser";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "linked-data-browser";
 import { IntegrationLogsViewer } from "./IntegrationLogsViewer";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 interface IntegrationModalProps {
   integration: IntegrationInformation;
@@ -80,7 +69,7 @@ export function IntegrationModal({
       `Are you sure you want to delete "${integration.name}"?`,
       "Type 'DELETE' to confirm"
     );
-    
+
     // Only proceed if user typed 'DELETE'
     if (confirmed !== "DELETE") {
       return;
@@ -100,108 +89,112 @@ export function IntegrationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[900px] w-[calc(100vw-2rem)] mx-4 my-8 h-[calc(100vh-4rem)]">
-        <DialogHeader className="pb-6">
-          <DialogTitle className="text-xl font-semibold">Integration Details</DialogTitle>
+      <DialogContent style={{
+        maxWidth: 900,
+        width: 'calc(100vw - 2rem)' as any,
+        marginHorizontal: 16,
+        marginVertical: 32,
+        height: 'calc(100vh - 4rem)' as any,
+      }}>
+        <DialogHeader style={{ paddingBottom: 24 }}>
+          <DialogTitle style={{ fontSize: 20, fontWeight: '600' }}>Integration Details</DialogTitle>
         </DialogHeader>
 
         {/* Tab Navigation */}
-        <View className="flex flex-row border-b border-border">
+        <View style={styles.tabNavigation}>
           <Button
             variant={activeTab === "details" ? "default" : "ghost"}
             text="Details"
             onPress={() => setActiveTab("details")}
-            className="flex-1 rounded-none border-b-2 border-transparent"
-            style={activeTab === "details" ? { borderBottomColor: "hsl(var(--primary))" } : {}}
+            style={[styles.tabButton, activeTab === "details" && styles.activeTabButton]}
           />
           <Button
             variant={activeTab === "logs" ? "default" : "ghost"}
             text="Logs"
             onPress={() => setActiveTab("logs")}
-            className="flex-1 rounded-none border-b-2 border-transparent"
-            style={activeTab === "logs" ? { borderBottomColor: "hsl(var(--primary))" } : {}}
+            style={[styles.tabButton, activeTab === "logs" && styles.activeTabButton]}
           />
         </View>
 
-                <ScrollView className="flex-1 -mx-8" showsVerticalScrollIndicator={true} contentContainerStyle={{ flexGrow: 1, minHeight: '100%' }}>
-          <View className="px-8">
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={true} contentContainerStyle={{ flexGrow: 1, minHeight: '100%' }}>
+          <View style={styles.contentContainer}>
             {activeTab === "details" && (
-              <View className="space-y-6">
-              {/* Integration Status Section */}
-              <Card className="border-border">
-                <CardHeader className="pb-4">
-                  <Text className="text-base font-medium text-card-foreground">
-                    Integration Status
-                  </Text>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <View className="flex flex-row items-center gap-3">
-                    <Badge variant={integration.status.type === "ok" ? "default" : "destructive"}>
-                      <Text className="text-sm font-medium">
-                        {integration.status.type}
-                      </Text>
-                    </Badge>
-                  </View>
-                  {integration.status.type === "error" && (
-                    <Text className="text-sm text-destructive leading-relaxed">
-                      {integration.status.message}
+              <View style={styles.spacingContainer}>
+                {/* Integration Status Section */}
+                <Card style={{ borderWidth: 1, borderColor: 'hsl(var(--border))' }}>
+                  <CardHeader style={{ paddingBottom: 16 }}>
+                    <Text style={styles.cardTitle}>
+                      Integration Status
                     </Text>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardHeader>
+                  <CardContent style={styles.cardContentSpacing}>
+                    <View style={styles.flexRowCenter}>
+                      <Badge variant={integration.status.type === "ok" ? "default" : "destructive"}>
+                        <Text style={styles.badgeText}>
+                          {integration.status.type}
+                        </Text>
+                      </Badge>
+                    </View>
+                    {integration.status.type === "error" && (
+                      <Text style={styles.errorText}>
+                        {integration.status.message}
+                      </Text>
+                    )}
+                  </CardContent>
+                </Card>
 
-              {/* Integration Information Section */}
-              <Card className="border-border">
-                <CardHeader className="pb-4">
-                  <Text className="text-base font-medium text-card-foreground">
-                    Integration Information
-                  </Text>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Input
-                    label="Integration Name"
-                    value={name}
-                    onChangeText={setName}
-                    placeholder="Enter integration name"
-                  />
-                  
-                  <Input
-                    label="Git URL"
-                    value={integration.gitAddress}
-                    editable={false}
-                    buttonRight={{
-                      text: "Copy",
-                      onPress: handleCopyGitUrl,
-                      variant: "outline",
-                    }}
-                  />
-                </CardContent>
-              </Card>
-            </View>
-          )}
+                {/* Integration Information Section */}
+                <Card style={{ borderWidth: 1, borderColor: 'hsl(var(--border))' }}>
+                  <CardHeader style={{ paddingBottom: 16 }}>
+                    <Text style={styles.cardTitle}>
+                      Integration Information
+                    </Text>
+                  </CardHeader>
+                  <CardContent style={styles.inputContainer}>
+                    <Input
+                      label="Integration Name"
+                      value={name}
+                      onChangeText={setName}
+                      placeholder="Enter integration name"
+                    />
 
-                                  {activeTab === "logs" && (
-              <View className="space-y-6">
+                    <Input
+                      label="Git URL"
+                      value={integration.gitAddress}
+                      editable={false}
+                      buttonRight={{
+                        text: "Copy",
+                        onPress: handleCopyGitUrl,
+                        variant: "outline",
+                      }}
+                    />
+                  </CardContent>
+                </Card>
+              </View>
+            )}
+
+            {activeTab === "logs" && (
+              <View style={styles.spacingContainer}>
                 <IntegrationLogsViewer integrationId={integration.id} />
               </View>
             )}
 
             {/* Footer - Only show on details tab */}
             {activeTab === "details" && (
-              <View className="pt-6 gap-3">
-                <View className="flex flex-row gap-3">
+              <View style={styles.footer}>
+                <View style={styles.buttonRow}>
                   <Button
                     variant="destructive"
                     onPress={handleDelete}
                     text="Delete Integration"
                     isLoading={isDeleting}
-                    className="flex-1"
+                    style={styles.flexButton}
                   />
                   <Button
                     onPress={handleUpdate}
                     text="Update Integration"
                     isLoading={isUpdating}
-                    className="flex-1"
+                    style={styles.flexButton}
                   />
                 </View>
               </View>
@@ -212,3 +205,66 @@ export function IntegrationModal({
     </Dialog>
   );
 }
+
+const styles = StyleSheet.create({
+  tabNavigation: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: 'hsl(var(--border))',
+  },
+  tabButton: {
+    flex: 1,
+    borderRadius: 0,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  activeTabButton: {
+    borderBottomColor: 'hsl(var(--primary))',
+  },
+  scrollView: {
+    flex: 1,
+    marginHorizontal: -32,
+  },
+  contentContainer: {
+    paddingHorizontal: 32,
+  },
+  spacingContainer: {
+    gap: 24,
+  },
+  cardContentSpacing: {
+    gap: 12,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'hsl(var(--card-foreground))',
+  },
+  flexRowCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  badgeText: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  errorText: {
+    fontSize: 14,
+    color: 'hsl(var(--destructive))',
+    lineHeight: 24,
+  },
+  inputContainer: {
+    gap: 16,
+  },
+  footer: {
+    paddingTop: 24,
+    gap: 12,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  flexButton: {
+    flex: 1,
+  },
+});

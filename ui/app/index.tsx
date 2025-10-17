@@ -1,14 +1,11 @@
 import React from 'react';
-import { DataBrowser } from '~/components/DataBrowser';
-import { Text } from '~/components/ui/text';
-import { RawCodeConfig } from '~/resourceViews/RawCode/RawCodeConfig';
-import { ContainerConfig } from '~/resourceViews/Container/ContainerConfig';
+
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
 import "../global.css";
 import { IntegrationDashboardConfig } from 'resourceViews/integrationDashboard/IntegrationDashboardConfig';
 import { HomeConfig } from 'resourceViews/home/HomeConfig';
-import { HomeView } from 'resourceViews/home/HomeView';
+import { ContainerConfig, DataBrowser, ProfileConfig, RawCodeConfig, Text } from 'linked-data-browser';
 
 
 export function Screen() {
@@ -17,9 +14,8 @@ export function Screen() {
     <SafeAreaProvider>
       <StatusBar />
       <DataBrowser
-        views={[HomeConfig, IntegrationDashboardConfig, ContainerConfig, RawCodeConfig]}
+        views={[HomeConfig, IntegrationDashboardConfig, ProfileConfig, ContainerConfig, RawCodeConfig]}
         mode={'server-ui'}
-        renderHomepage={() => <HomeView />}
         renderLogo={() => <Text>Logo</Text>}
       />
     </SafeAreaProvider>
