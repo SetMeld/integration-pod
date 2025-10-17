@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { useGetIntegrationLogs, type IntegrationLog, type LogQueryOptions } from "../api/useGetIntegrationLogs";
 import { Card, CardContent, CardHeader, Text, Button, Badge } from "linked-data-browser";
 
@@ -114,22 +114,22 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
   const hasMoreLogs = pagination.offset + pagination.limit < pagination.total;
 
   return (
-    <Card className="border-border">
-      <CardHeader className="pb-4">
-        <Text className="text-base font-medium text-card-foreground">
+    <Card style={styles.card}>
+      <CardHeader style={styles.cardHeader}>
+        <Text style={styles.headerText}>
           Integration Logs
         </Text>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent style={styles.cardContent}>
         {/* Filters */}
-        <View className="flex flex-row flex-wrap gap-2">
-          <View className="flex flex-row items-center gap-2">
-            <Text className="text-sm font-medium">Category:</Text>
+        <View style={styles.filtersContainer}>
+          <View style={styles.filterRow}>
+            <Text style={styles.filterLabel}>Category:</Text>
             <Button
               variant={!filters.category ? "default" : "outline"}
               text="All"
               onPress={() => handleFilterChange("category", undefined)}
-              className="h-8 px-2"
+              style={styles.filterButton}
             />
             {CATEGORIES.map((category) => (
               <Button
@@ -137,18 +137,18 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
                 variant={filters.category === category ? "default" : "outline"}
                 text={category}
                 onPress={() => handleFilterChange("category", category)}
-                className="h-8 px-2"
+                style={styles.filterButton}
               />
             ))}
           </View>
 
-          <View className="flex flex-row items-center gap-2">
-            <Text className="text-sm font-medium">Level:</Text>
+          <View style={styles.filterRow}>
+            <Text style={styles.filterLabel}>Level:</Text>
             <Button
               variant={!filters.level ? "default" : "outline"}
               text="All"
               onPress={() => handleFilterChange("level", undefined)}
-              className="h-8 px-2"
+              style={styles.filterButton}
             />
             {LEVELS.map((level) => (
               <Button
@@ -156,7 +156,7 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
                 variant={filters.level === level ? "default" : "outline"}
                 text={level}
                 onPress={() => handleFilterChange("level", level)}
-                className="h-8 px-2"
+                style={styles.filterButton}
               />
             ))}
           </View>
@@ -164,75 +164,75 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
 
         {/* Error Message */}
         {error && (
-          <View className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-            <Text className="text-sm text-destructive">{error}</Text>
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
 
         {/* Logs Stream */}
-        <View className="border border-border rounded-md bg-muted/20 h-[400px] overflow-hidden relative">
+        <View style={styles.logsContainer}>
           <ScrollView
             ref={scrollViewRef}
-            className="flex-1 p-4"
+            style={styles.scrollView}
             showsVerticalScrollIndicator={true}
             contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start' }}
           >
             {/* Load More Button */}
             {hasMoreLogs && (
-              <View className="mt-4 flex items-center">
+              <View style={styles.loadMoreContainer}>
                 <Button
                   variant="outline"
                   text={loadingMore ? "Loading..." : "Load More Logs"}
                   onPress={handleLoadMore}
                   disabled={loadingMore}
-                  className="h-8 px-4"
+                  style={styles.loadMoreButton}
                 />
               </View>
             )}
 
             {/* Loading State */}
             {loading && logs.length === 0 && (
-              <View className="p-4 items-center">
-                <Text className="text-sm text-muted-foreground">Loading logs...</Text>
+              <View style={styles.centerContainer}>
+                <Text style={styles.mutedText}>Loading logs...</Text>
               </View>
             )}
 
             {/* Empty State */}
             {!loading && logs.length === 0 && (
-              <View className="p-4 items-center">
-                <Text className="text-sm text-muted-foreground">No logs found</Text>
+              <View style={styles.centerContainer}>
+                <Text style={styles.mutedText}>No logs found</Text>
               </View>
             )}
 
             {/* Logs Stream */}
             {!loading && logs.length > 0 && (
-              <View className="space-y-1">
+              <View style={styles.logsList}>
                 {logs.map((log) => (
-                  <View key={log.id} className="flex flex-row items-start gap-3 py-1 border-b border-border/30 last:border-b-0">
+                  <View key={log.id} style={styles.logRow}>
                     {/* Timestamp */}
-                    <Text className="text-xs text-muted-foreground min-w-[140px] font-mono">
+                    <Text style={styles.timestamp}>
                       {formatTimestamp(log.timestamp)}
                     </Text>
 
                     {/* Level Badge */}
-                    <Badge variant={getLevelColor(log.level)} className="min-w-[50px] justify-center">
-                      <Text className="text-xs font-medium">{log.level.toUpperCase()}</Text>
+                    <Badge variant={getLevelColor(log.level)} style={styles.levelBadge}>
+                      <Text style={styles.badgeText}>{log.level.toUpperCase()}</Text>
                     </Badge>
 
                     {/* Category Badge */}
-                    <Badge variant={getCategoryColor(log.category)} className="min-w-[80px] justify-center">
-                      <Text className="text-xs font-medium">{log.category}</Text>
+                    <Badge variant={getCategoryColor(log.category)} style={styles.categoryBadge}>
+                      <Text style={styles.badgeText}>{log.category}</Text>
                     </Badge>
 
                     {/* Message */}
-                    <View className="flex-1 min-w-0">
-                      <Text className="text-sm font-mono leading-relaxed break-words">
+                    <View style={styles.messageContainer}>
+                      <Text style={styles.messageText}>
                         {log.message}
                       </Text>
                       {log.metadata && Object.keys(log.metadata).length > 0 && (
-                        <View className="mt-1 p-2 bg-background/50 rounded border border-border/50">
-                          <Text className="text-xs text-muted-foreground mb-1">Metadata:</Text>
-                          <Text className="text-xs font-mono text-muted-foreground">
+                        <View style={styles.metadataContainer}>
+                          <Text style={styles.metadataLabel}>Metadata:</Text>
+                          <Text style={styles.metadataText}>
                             {JSON.stringify(log.metadata, null, 2)}
                           </Text>
                         </View>
@@ -245,12 +245,12 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
           </ScrollView>
 
           {/* Scroll to Bottom Button */}
-          <View className="absolute bottom-4 right-4">
+          <View style={styles.scrollToBottomContainer}>
             <Button
               variant="outline"
               text="↓"
               onPress={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-              className="h-8 w-8 p-0 rounded-full"
+              style={styles.scrollToBottomButton}
             />
           </View>
         </View>
@@ -260,3 +260,145 @@ export function IntegrationLogsViewer({ integrationId }: IntegrationLogsViewerPr
     </Card>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+  },
+  cardHeader: {
+    paddingBottom: 16,
+  },
+  headerText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  cardContent: {
+    gap: 16,
+  },
+  filtersContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  filterRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  filterLabel: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  filterButton: {
+    height: 32,
+    paddingHorizontal: 8,
+  },
+  errorContainer: {
+    padding: 12,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.2)',
+    borderRadius: 6,
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#dc2626',
+  },
+  logsContainer: {
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    borderRadius: 6,
+    backgroundColor: 'rgba(249, 250, 251, 0.2)',
+    height: 400,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  scrollView: {
+    flex: 1,
+    padding: 16,
+  },
+  loadMoreContainer: {
+    marginTop: 16,
+    alignItems: 'center',
+  },
+  loadMoreButton: {
+    height: 32,
+    paddingHorizontal: 16,
+  },
+  centerContainer: {
+    padding: 16,
+    alignItems: 'center',
+  },
+  mutedText: {
+    fontSize: 14,
+    color: '#6b7280',
+  },
+  logsList: {
+    gap: 4,
+  },
+  logRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 12,
+    paddingVertical: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(229, 231, 235, 0.3)',
+  },
+  timestamp: {
+    fontSize: 12,
+    color: '#6b7280',
+    minWidth: 140,
+    fontFamily: 'monospace',
+  },
+  levelBadge: {
+    minWidth: 50,
+    justifyContent: 'center',
+  },
+  categoryBadge: {
+    minWidth: 80,
+    justifyContent: 'center',
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  messageContainer: {
+    flex: 1,
+    minWidth: 0,
+  },
+  messageText: {
+    fontSize: 14,
+    fontFamily: 'monospace',
+    lineHeight: 21,
+  },
+  metadataContainer: {
+    marginTop: 4,
+    padding: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(229, 231, 235, 0.5)',
+  },
+  metadataLabel: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginBottom: 4,
+  },
+  metadataText: {
+    fontSize: 12,
+    fontFamily: 'monospace',
+    color: '#6b7280',
+  },
+  scrollToBottomContainer: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+  },
+  scrollToBottomButton: {
+    height: 32,
+    width: 32,
+    padding: 0,
+    borderRadius: 16,
+  },
+});

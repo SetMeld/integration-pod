@@ -1,5 +1,5 @@
 import React, { FunctionComponent, use, useEffect } from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text, Button, useTargetResource } from "linked-data-browser";
 import { useSolidAuth, useRootContainerFor } from '@ldo/solid-react';
 import { SolidContainerUri } from '@ldo/connected-solid';
@@ -20,21 +20,43 @@ export const HomeView: FunctionComponent = () => {
   }, [rootDirectory?.uri]);
 
   return (
-    <View className="flex-1 bg-background items-center justify-center p-6">
-      <View className="items-center space-y-8 max-w-md">
+    <View style={styles.container}>
+      <View style={styles.content}>
         {/* Large Title */}
-        <Text className="text-6xl font-bold text-foreground text-center">
+        <Text style={styles.title}>
           HODA Digital
         </Text>
-        
+
         {/* Login Button */}
         <Button
           text="Log in with your Pod"
           variant="default"
-          className="w-full"
+          style={styles.button}
           onPress={() => login(DEFAULT_ISSUER)}
         />
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  content: {
+    alignItems: 'center',
+    gap: 32,
+    maxWidth: 448,
+  },
+  title: {
+    fontSize: 60,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  button: {
+    width: '100%',
+  },
+});

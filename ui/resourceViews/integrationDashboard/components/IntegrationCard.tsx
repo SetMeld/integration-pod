@@ -1,6 +1,6 @@
 import { FunctionComponent } from "react";
 import { IntegrationInformation } from "../../../../common/IntegrationInformation";
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { Card, CardHeader, Badge, Text, CardContent } from "linked-data-browser";
 
 export const IntegrationCard: FunctionComponent<{
@@ -9,32 +9,32 @@ export const IntegrationCard: FunctionComponent<{
 }> = ({ integration, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-      <Card className="h-full border-border hover:border-primary/50 transition-colors duration-200 shadow-sm hover:shadow-md">
-        <CardHeader className="pb-4 px-6 pt-6">
-          <View className="flex flex-row items-start justify-between gap-3">
-            <View className="flex-1 min-w-0">
-              <Text className="text-lg font-semibold text-card-foreground truncate">
+      <Card style={styles.card}>
+        <CardHeader style={styles.cardHeader}>
+          <View style={styles.headerRow}>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title} numberOfLines={1}>
                 {integration.name}
               </Text>
             </View>
             <Badge
               variant={integration.status.type === "ok" ? "default" : "destructive"}
-              className="shrink-0"
+              style={styles.badge}
             >
-              <Text className="text-xs font-medium">
+              <Text style={styles.badgeText}>
                 {integration.status.type}
               </Text>
             </Badge>
           </View>
         </CardHeader>
-        <CardContent className="px-6 pb-6">
+        <CardContent style={styles.cardContent}>
           {integration.status.type === "error" ? (
-            <Text className="text-sm text-destructive leading-relaxed">
+            <Text style={styles.errorText}>
               {integration.status.message}
             </Text>
           ) : (
-            <View className="space-y-2">
-              <Text className="text-sm text-muted-foreground">
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoText}>
                 Git URL: {integration.gitAddress}
               </Text>
             </View>
@@ -44,3 +44,54 @@ export const IntegrationCard: FunctionComponent<{
     </TouchableOpacity>
   )
 }
+
+const styles = StyleSheet.create({
+  card: {
+    height: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  cardHeader: {
+    paddingBottom: 16,
+    paddingHorizontal: 24,
+    paddingTop: 24,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  titleContainer: {
+    flex: 1,
+    minWidth: 0,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  badge: {
+    flexShrink: 0,
+  },
+  badgeText: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  cardContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+  },
+  errorText: {
+    fontSize: 14,
+    lineHeight: 21,
+  },
+  infoContainer: {
+    gap: 8,
+  },
+  infoText: {
+    fontSize: 14,
+  },
+});
